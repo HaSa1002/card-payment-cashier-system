@@ -13,28 +13,64 @@
         
     </head>
     <body>
-        <?php /*Test*/
-            //var_dump($_SESSION);
-            if (!isset($_SESSION['access'])) {
-                $_SESSION['access'] = 0;
+        <?php 
+        if (!isset($_SESSION['access'])) {
+            $_SESSION['access'] = 0;
+        }
+            //Eventuelle Dinge prüfen:
+            if (isset($_POST['ausweis'], $_POST['pw'])) {
+                require 'modules/proceed.php';
+                if ($_SESSION['access'] == 0)
+                echo('<div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Login fehlgeschlagen!</h4>
+                <p>Ausweisnummer oder Passwort inkorrekt.</p>
+              </div>');
+            } else if (isset($_SESSION['ausweis'], $_SESSION['amount'])) {
+
             }
-                switch ($_SESSION['access']) {
-                    case '0':
-                    $PAGE = "sign_in";
-                    require 'modules/sign-in.php';
-                    break;
-                    case '1':
+
+            
+            switch ($_SESSION['access']) {
+                case '0':
+                $PAGE = "sign_in";
+                require 'modules/sign-in.php';
+                break;
+                case '1':
+                if (isset($_GET['page']))
+                    $PAGE = $_GET['page'];
+                else 
                     $PAGE = 'cashier';
-                    require 'modules/cashier.php';
-                    break;
-                }
+                    switch($PAGE) {
+                        case 'account':
+                            require 'account.php';
+                            break;
+                        case 'balance':
+                        require 'modules/balance.php';
+                            break;
+                        case 'pay':
+                            require 'modules/pay.php';
+                            break;
+                        case 'logout':
+                            $_SESSION['ausweis'] = 0;
+                            $_SESSION['access'] = 0;
+                            session_destroy();
+                            header("Location: index.php");
+                        break;
+                        case 'cashier':
+                        default:
+                        require 'modules/cashier.php';
+                        break;
+                    }
+                break;
+            }
+            
         ?>
                 <footer class ="footer"><p class="text-muted">
-                <a href="index.php" class="btn btn-outline-success">Home</a>
+                <a href="index.php" class="btn btn-outline-success">Startseite</a>
                 <?php if ($_SESSION['access'] != 0)
                         echo '
-                        <a href="account.php" class="btn btn-outline-success">Account balance</a>
-                        <a href="logout.php" class="btn btn-outline-warning">Log out</a>
+                        <a href="index.php?page=account" class="btn btn-outline-success">Guthaben</a>
+                        <a href="index.php?page=logout" class="btn btn-outline-warning">Ausloggen</a>
                         '; ?>
                         </p>
             </footer>
