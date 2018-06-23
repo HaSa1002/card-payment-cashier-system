@@ -42,13 +42,25 @@
                     $PAGE = 'cashier';
                     switch($PAGE) {
                         case 'account':
-                            require 'account.php';
+                            require 'modules/account.php';
                             break;
                         case 'balance':
                         require 'modules/balance.php';
                             break;
                         case 'pay':
                             require 'modules/pay.php';
+                            break;
+                        case 'waren':
+                            require 'modules/waren.php';
+                            break;
+                        case 'warenBetrag':
+                            require 'modules/warenBetrag.php';
+                            break;
+                        case 'addWare':
+                            require 'modules/addWare.php';
+                            break;
+                        case 'checkout':
+                            require 'modules/checkout.php';
                             break;
                         case 'logout':
                             $_SESSION['ausweis'] = 0;
@@ -70,6 +82,7 @@
                 <?php if ($_SESSION['access'] != 0)
                         echo '
                         <a href="index.php?page=account" class="btn btn-outline-success">Guthaben</a>
+                        <a href="index.php?page=waren" class="btn btn-outline-success">Waren</a>
                         <a href="index.php?page=logout" class="btn btn-outline-warning">Ausloggen</a>
                         '; ?>
                         </p>
