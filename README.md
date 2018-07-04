@@ -2,7 +2,7 @@
 This is a cashier sytem, I am currently developing for my school. I recently changed to use the phalcon framework. See below for an installation guide.
 
 # Language #
-As I have a set deadline and adoing it for a german school, this project will be often in German. I am going to translate and unify it in late august/ mid september.
+As I have a set deadline and as I doing it for a german school, this project will be often in German. I am going to translate and unify it in late august/ mid september.
 
 # Installation #
 1. Install a webserver (i.e. [XAMPP](https://www.apachefriends.org/index.html))
