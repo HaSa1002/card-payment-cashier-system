@@ -1,0 +1,16 @@
+<p>Transaktion #<?php echo $trans_id ?>
+<hr>
+<p>Die Cafeteria vertreten durch<br/>
+<strong><?php echo $vertreter; ?></strong> bestätigt hiermit die Einzahlung<br/>
+von <strong><?php echo str_replace('.', ',', $betrag); ?></strong> Euro auf das Guthabenkonto <strong><?php echo $ausweisnummer; ?></strong>.</p>
+<p><small>Das Guthaben kann in den ersten großen Pausen ausgezahlt oder zum Kauf in der Cafeteria genutzt werden.</small></p>
+<hr>
+<p>Berlin, den <?php echo $datum; ?> </p>
+
+<div class="d-print-none">
+    <hr>
+    <div class="btn-group">
+        <button class="btn btn-success btn-lg" onclick="window.print()">Drucken</button>
+        <?php echo $this->tag->linkTo(['karten/', 'Weiter', "class" => "btn btn-lg btn-danger"]); ?>
+    </div>
+</div>

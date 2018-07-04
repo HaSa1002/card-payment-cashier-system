@@ -1,0 +1,34 @@
+<?php
+    echo $this->tag->form(
+        [
+            "karten/beleg",
+            "autocomplete" => "off",
+            "class" => "form-signin"
+        ]
+    );
+?>
+
+<div class="text-center mb-4">
+    <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
+    <h2>Cafeteria Kassensystem</h1>
+    <p class="lead">
+        Bitte die Werte kontrollieren.
+    </p>
+    <?php echo $this->getContent() ?>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["ausweis", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer", "value" => $ausweisnummer, "readonly" => ""]) ?>
+    <label for="fieldAusweis">Ausweisnummer</label>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["amount", "class" => "form-control", "required" => "", "id" => "level", "placeholder" => "Betrag", "value" => $betrag, "readonly" => ""]) ?>
+    <label for="level">Betrag</label>
+</div>
+
+    <?php echo $this->tag->submitButton(["Zahlen", "class" => "btn btn-lg btn-danger btn-block", "name" => "source", "value" => $source]);
+    echo $this->tag->linkTo(["karten/$source/$ausweisnummer/$betrag/", "Angaben korrigieren", "class" => "btn btn-lg btn-primary btn-block", "name" => "source", "value" => $source]);
+    ?>
+
+<?php echo $this->tag->endForm(); ?>

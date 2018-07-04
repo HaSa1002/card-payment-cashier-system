@@ -1,0 +1,65 @@
+<div class="row">
+
+<?php
+    echo $this->getContent();
+    echo $this->tag->form([
+        'verkauf/overview',
+        'class' => 'form form-inline'
+    ]);
+?>
+<div class="input-group" style="margin-bottom: 1rem">
+<div class="form-label-group input-group-prepend" style="margin-bottom: 0rem">
+    <?php echo $this->tag->textField(["id", "class" => "form-control", "id" => "waren_id", "size" => 40, "placeholder" => "Warennummer"]); ?>
+    <label for="waren_id">Warennummer</label>
+</div>
+<div class="input-group-append">
+<?php echo $this->tag->submitButton(["Suchen", "class"=> "btn btn-lg btn-primary"]); 
+    echo "</div></div>";
+    echo $this->tag->endForm();
+?>
+</div>
+<div class="row">
+    <table class="table table-hover">
+        <thead>
+            <tr><th>Warennummer</th><th>Produkt</th><th>Preis (netto)</th><th>19% MwSt?</th><th>Aktionen</th></tr>
+        </thead>
+        <tbody>
+            <?php foreach($page->items as $ware): ?>
+            <tr <?php if ($ware->deleted) echo "class=\"table-secondary\"" ?>><th><?php echo $ware->id ?></td>
+                <td><?php echo $ware->description ?></td>
+                <td><?php echo str_replace('.', ',', $ware->price)." Euro" ?></td>
+                <td><?php if ($ware->mehrwertsteuer_voll) echo "Ja"; else echo "Nein" ?></td>
+                <td><div class="btn-group">
+                <?php echo $this->tag->linkTo(["verkauf/edit/$ware->id", "Bearbeiten", "class" => "btn btn-sm btn-outline-warning"]);
+                    echo $this->tag->linkTo(["verkauf/delete/$ware->id", "Löschen", "class" => "btn btn-sm btn-outline-danger"]);
+                ?>
+                </div>
+                </td>
+            </tr>
+            <?php endforeach ?>
+        </tbody>
+
+        <caption>
+    </table>
+    <div class="row justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item">
+              <?php echo $this->tag->linkTo(["verkauf/overview/$page->before/$perPage", "<span aria-hidden=\"true\">&laquo;</span>
+                  <span class=\"sr-only\">Previous</span>", "class" => "page-link"]) ?>
+              </li>
+              <?php if ($page->current != $page->before): ?>
+              <li class="page-item"><?php echo $this->tag->linkTo(["verkauf/overview/$page->before/$perPage", "$page->before", "class" => "page-link"]) ?></li>
+              <?php endif ?>
+              <li class="page-item active"><?php echo $this->tag->linkTo(["verkauf/overview/$page->current/$perPage", "$page->current", "class" => "page-link"]) ?></li>
+              <?php if ($page->current != $page->next): ?>
+              <li class="page-item"><?php echo $this->tag->linkTo(["verkauf/overview/$page->next/$perPage", "$page->next", "class" => "page-link"]) ?></li>
+              <?php endif ?>
+              <li class="page-item">
+              <?php echo $this->tag->linkTo(["verkauf/overview/$page->next/$perPage", "<span aria-hidden=\"true\">&raquo;</span>
+                  <span class=\"sr-only\">Next</span>", "class" => "page-link"]) ?>
+              </li>
+            </ul>
+        </nav>
+    </div>
+</div>

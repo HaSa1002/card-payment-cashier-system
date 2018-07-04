@@ -1,0 +1,26 @@
+<p>Transaktion #<?php echo $trans_id ?>
+<hr>
+<p>Die Person des Guthabenkontos <strong><?php echo $ausweisnummer; ?></strong><br/>
+bestätigt hiermit die Auszahlung von <strong><?php echo str_replace('.', ',', $betrag); ?></strong> Euro<br/>
+durch die Cafeteria, vertreten durch <strong><?php echo $vertreter; ?></strong>.</p>
+<br/><br/><br/>
+<p>Berlin, den <?php echo $datum; ?>&nbsp;&nbsp;&nbsp;&nbsp;<small>Unterschrift des Empfängers</small></p>
+
+<div class="d-print-none">
+    <hr>
+    <p id="helper" class="alert alert-warning">Drucken ist erforderlich.</p><p></p>
+    <div class="btn-group">
+    <button class="btn btn-success btn-lg" id="print">Drucken</button>
+    <?php echo $this->tag->linkTo(['karten/', 'Weiter', "class" => "btn btn-lg btn-danger", "id" => "weiter"]); ?>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $("#weiter").hide();
+        $("#print").on("click", function(event) {
+        window.print();
+        $("#weiter").show();
+        $("#helper").hide();
+        });
+    });
+</script>

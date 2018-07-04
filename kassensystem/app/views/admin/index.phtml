@@ -1,0 +1,37 @@
+<?php
+    echo $this->tag->form(
+        [
+            "admin/",
+            "autocomplete" => "off",
+            "class" => "form-signin"
+        ]
+    );
+?>
+
+<div class="text-center mb-4">
+    <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
+    <h2>Cafeteria Kassensystem</h1>
+    <p class="lead">
+        Bitte einloggen.
+    </p>
+    <?php echo $this->getContent() ?>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["ausweis", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer"]) ?>
+    <label for="fieldAusweis">Ausweisnummer</label>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->passwordField(["pw", "class" => "form-control", "required" => "", "id" => "pw", "placeholder" => "Passwort"]) ?>
+    <label for="pw">Passwort</label>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["access", "class" => "form-control", "required" => "", "id" => "level", "placeholder" => "Zugriffslevel"]) ?>
+    <label for="level">Zugriffslevel</label>
+</div>
+
+    <?php echo $this->tag->submitButton(["Änderungen akzeptieren", "class" => "btn btn-lg btn-primary btn-block"]) ?>
+
+<?php echo $this->tag->endForm(); ?>

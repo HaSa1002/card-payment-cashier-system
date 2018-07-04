@@ -1,0 +1,32 @@
+<?php
+    echo $this->tag->form(
+        [
+            "karten/check/Einzahlung",
+            "autocomplete" => "off",
+            "class" => "form-signin"
+        ]
+    );
+?>
+
+<div class="text-center mb-4">
+    <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
+    <h2>Cafeteria Kassensystem</h1>
+    <p class="lead">
+        Bitte die Ausweisnummer und den Einzahlungsbetrag eingeben.
+    </p>
+    <?php echo $this->getContent() ?>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["ausweis", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer", "value" => $ausweisnummer, "autofocus" => ""]) ?>
+    <label for="fieldAusweis">Ausweisnummer</label>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["amount", "class" => "form-control", "required" => "", "id" => "amount", "placeholder" => "Betrag", "value" => $betrag]) ?>
+    <label for="amount">Betrag</label>
+</div>
+
+    <?php echo $this->tag->submitButton(["Weiter", "class" => "btn btn-lg btn-primary btn-block"]) ?>
+
+<?php echo $this->tag->endForm(); ?>

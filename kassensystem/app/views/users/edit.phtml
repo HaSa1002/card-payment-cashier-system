@@ -1,0 +1,70 @@
+<?php
+/**
+ * @var \Phalcon\Mvc\View\Engine\Php $this
+ */
+?>
+
+<div class="row">
+    <nav>
+        <ul class="pager">
+            <li class="previous"><?php echo $this->tag->linkTo(["users", "Back"]) ?></li>
+        </ul>
+    </nav>
+</div>
+
+<div class="page-header">
+    <h1>
+        Edit users
+    </h1>
+</div>
+
+<?php echo $this->getContent(); ?>
+
+<?php
+    echo $this->tag->form(
+        [
+            "users/save",
+            "autocomplete" => "off",
+            "class" => "form-horizontal"
+        ]
+    );
+?>
+
+<div class="form-group">
+    <label for="fieldAusweis" class="col-sm-2 control-label">Ausweis</label>
+    <div class="col-sm-10">
+        <?php echo $this->tag->textField(["ausweis", "size" => 30, "class" => "form-control", "id" => "fieldAusweis"]) ?>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fieldAmount" class="col-sm-2 control-label">Amount</label>
+    <div class="col-sm-10">
+        <?php echo $this->tag->textField(["amount", "size" => 30, "class" => "form-control", "id" => "fieldAmount"]) ?>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fieldPw" class="col-sm-2 control-label">Pw</label>
+    <div class="col-sm-10">
+        <?php echo $this->tag->textField(["pw", "size" => 30, "class" => "form-control", "id" => "fieldPw"]) ?>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fieldAccess" class="col-sm-2 control-label">Access</label>
+    <div class="col-sm-10">
+        <?php echo $this->tag->textField(["access", "type" => "number", "class" => "form-control", "id" => "fieldAccess"]) ?>
+    </div>
+</div>
+
+
+<?php echo $this->tag->hiddenField("id") ?>
+
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+        <?php echo $this->tag->submitButton(["Save", "class" => "btn btn-default"]) ?>
+    </div>
+</div>
+
+<?php echo $this->tag->endForm(); ?>
