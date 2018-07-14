@@ -34,7 +34,7 @@ class KartenController extends \Phalcon\Mvc\Controller
         if (!$this->authorized()) return;
         $this->view->source = $_source;
         $this->view->ausweisnummer = $this->request->getPost('ausweis');
-        $this->view->betrag = $this->request->getPost('amount');
+        $this->view->betrag = $this->filter->sanitize(str_replace(',', '.', $this->request->getPost('amount')), 'float');
         $user = Users::findFirstByAusweis($this->view->ausweisnummer);
         if ($user) {
             if ($user->amount < $this->view->betrag && $_source == "Auszahlung") {
@@ -72,7 +72,7 @@ class KartenController extends \Phalcon\Mvc\Controller
         $this->view->datum = $datetime->format("d.m.Y H:i:s");
         $transaktion = new Kartentransaktionen();
         $transaktion->user = $this->view->ausweisnummer;
-        $transaktion->datetime = $datetime->format("Y-m.d H:i:s");;
+        $transaktion->datetime = $datetime->format("Y-m.d H:i:s");
         $transaktion->vertreter = $this->view->vertreter;
 
         if ($this->view->betrag <= 0) {
@@ -120,7 +120,7 @@ class KartenController extends \Phalcon\Mvc\Controller
                 $user->access = 0;
              }
 
-             $user->amount = $this->view->betrag;
+             $user->amount += $this->view->betrag;
              $transaktion->amount =  $this->view->betrag;
              $user->save();
              $transaktion->save();

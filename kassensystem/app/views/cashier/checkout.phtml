@@ -1,0 +1,27 @@
+<?php
+    echo $this->tag->form(
+        [
+            "cashier/beleg",
+            "autocomplete" => "off",
+            "class" => "form-signin"
+        ]
+    );
+?>
+
+<div class="text-center mb-4">
+    <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
+    <h2>Cafeteria Kassensystem</h1>
+    <p class="lead">
+        Ausweisnummer eingeben, um <?php echo "$price Euro zu bezahlen.<br><strong>MwSt. A (19%): $mwstA €, MwSt. B (7%): $mwstB €.</strong>" ?>
+    </p>
+    <?php echo $this->getContent() ?>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["id", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer"]) ?>
+    <label for="fieldAusweis">Ausweisnummer</label>
+</div>
+
+    <?php echo $this->tag->submitButton(["Zahlen", "class" => "btn btn-lg btn-danger btn-block"]) ?>
+
+<?php echo $this->tag->endForm(); ?>

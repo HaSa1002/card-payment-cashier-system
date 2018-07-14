@@ -1,0 +1,27 @@
+<?php
+    echo $this->tag->form(
+        [
+            "karten/betrag",
+            "autocomplete" => "off",
+            "class" => "form-signin"
+        ]
+    );
+?>
+
+<div class="text-center mb-4">
+    <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
+    <h2>Cafeteria Kassensystem</h1>
+    <p class="lead">
+        Ausweisnummer eingeben, um den Kassiervorgang zu starten.
+    </p>
+    <?php echo $this->getContent() ?>
+</div>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["ausweis", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer"]) ?>
+    <label for="fieldAusweis">Ausweisnummer</label>
+</div>
+
+    <?php echo $this->tag->submitButton(["Starten", "class" => "btn btn-lg btn-primary btn-block"]) ?>
+
+<?php echo $this->tag->endForm(); ?>
