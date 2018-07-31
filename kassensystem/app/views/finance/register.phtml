@@ -1,0 +1,56 @@
+<div class="d-print-none">
+<?php
+    echo $this->getContent();
+    echo $this->tag->form([
+        'finance/register',
+        'class' => 'form form-inline'
+    ]);
+?>
+<div class="input-group" style="margin-bottom: 1rem">
+<div class="form-label-group input-group-prepend" style="margin-bottom: 0rem">
+    <input type="date" class="form-control" name="dt" id="dt"/>
+    <label for="dt">frühester Zeitpunkt</label>
+</div>
+    <input type="time" class="form-control" name="t" id="t"/>
+<div class="input-group-append">
+<?php echo $this->tag->submitButton(["Berechnen", "class"=> "btn btn-lg btn-primary"]); 
+    echo "</div></div>";
+    echo $this->tag->endForm();
+?>
+</div>
+
+<div class="row">
+<div class="col">
+    <div class="card">
+        <div class="card-header">
+            <h4>Treuhandkonto</h4>
+        </div>
+        <div class="card-body">
+            Ein/Auszahlungen: <?php echo $t_saldo ?><br/>
+            Gesamt: <?php echo $t_sum ?>
+        </div>
+        <div class="card-footer">
+            <small>Ausgaben frühestens: <?php echo $i_since ?></small><br/>
+            <small>Stand: <?php echo $t_date ?></small>
+        </div>
+    </div>
+</div>
+
+<div class="col">
+<div class="card">
+        <div class="card-header">
+            <h4>Cafeteriakonto</h4>
+        </div>
+        <div class="card-body">
+            Einnahmen: <?php echo $income ?><br/>
+            davon Steuern <?php echo $taxes ?>
+        </div>
+        <div class="card-footer">
+            <small>Ausgaben frühestens: <?php echo $i_since ?></small><br/>
+            <small>Stand: <?php echo $t_date ?></small>
+        </div>
+    </div>
+</div>
+
+</div>
+

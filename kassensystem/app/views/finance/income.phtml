@@ -1,0 +1,43 @@
+<?php 
+    function getMonthName($i) {
+        switch ($i) {
+            case 0:  return "Januar";
+            case 1:  return "Februar";
+            case 2:  return "März";
+            case 3:  return "April";
+            case 4:  return "Mai";
+            case 5:  return "Juni";
+            case 6:  return "Juli";
+            case 7:  return "August";
+            case 8:  return "September";
+            case 9:  return "Oktober";
+            case 10: return "November";
+            case 11: return "Dezember";
+            default: return "Unbekannter Monat: $i";
+        }
+    }
+echo $this->getContent();
+?>
+
+
+    <div class="card-deck">
+        <?php $i = 0; foreach($t as $m): if ($i % 4 == 0): ?>
+    </div>
+    <div class="card-deck">
+        <?php endif; ?>
+            <div class="card <?php if (isset($m[5])) echo "border-warning" ?>" style="margin: 15px">
+                <div class="card-header <?php if (isset($m[5])) echo "text-warning" ?>">
+                    <h5><?php echo getMonthName($i)." - $year" ?></h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-sm">
+                        <thead><tr><th>MwSt</th><th>Netto</th><th>Steuern</th></tr></thead>
+                        <tbody>
+                            <tr><th>7%</th><td><?php echo $m[0] ?></td><td><?php echo $m[1] ?></td></tr>
+                            <tr><th>19%</th><td><?php echo $m[2] ?></td><td><?php echo $m[3] ?></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <?php $i++; endforeach; ?>
+    </div>

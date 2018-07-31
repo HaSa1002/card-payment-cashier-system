@@ -42,6 +42,100 @@ class Transaktionen extends \Phalcon\Mvc\Model
         $this->setSource("transaktionen");
     }
 
+
+    /**
+     * Returns all Transactions since the val
+     * @var dt The Datetime
+     * @return false|array['id','user','vertreter','datetime','price','tax']
+     */
+    public function getTransactionsSince($dt = 0) {
+        $t = $this->modelsManager->executeQuery("SELECT Transaktionen.trans_id, user, vertreter, datetime, menge, id, price, mehrwertsteuer_voll
+        FROM Transaktionen, Warentransaktionen, Warenrevisionen
+        WHERE Transaktionen.trans_id = Warentransaktionen.trans_id AND waren_id = id 
+        AND Warentransaktionen.revision = Warenrevisionen.revision AND datetime >= :dt:", ['dt' => $dt]);
+
+        if (!$t) return false;
+        $res = [];
+
+        foreach ($t as $i) {
+            if (!isset($res[$i->trans_id])) {
+                $res[$i->trans_id] = ['id' => $i->trans_id, 'user' => $i->user, 'vertreter' => $i->vertreter, 'datetime' => $i->datetime, 'price' => 0, 'tax' => 0];
+            }
+            if ($i->mehrwertsteuer_voll) $mwst = 1.19;
+            else $mwst = 1.07;
+            $res[$i->trans_id]['price'] += round($i->price * $mwst, 2) * $i->menge;
+            $res[$i->trans_id]['tax'] += round($i->price * ($mwst-1), 2) * $i->menge;
+        }
+        return $res;
+        
+    }
+
+
+    /**
+     * Returns the transaction details
+     * @var id - transactionid
+     * @return array|false
+     */
+    public function getTransaction($id) {
+        $t = $this->findFirstByTrans_id($id);
+        if ($t === false) return false;
+        $w = $this->modelsManager->executeQuery("SELECT menge, id, price, mehrwertsteuer_voll, description
+        FROM Warentransaktionen, Warenrevisionen
+        WHERE waren_id = id AND Warentransaktionen.revision = Warenrevisionen.revision AND trans_id = :id:
+        ORDER BY id ASC", ['id' => $id]);
+        return [$t, $w];
+    }
+
+
+    /**
+     * Returns the income and the taxes
+     */
+    public function getIncomeSince($datetime) {
+        $res = $this->modelsManager->executeQuery("SELECT menge, price, mehrwertsteuer_voll
+        FROM Transaktionen, Warentransaktionen, Warenrevisionen
+        WHERE Transaktionen.trans_id = Warentransaktionen.trans_id AND waren_id = id 
+        AND Warentransaktionen.revision = Warenrevisionen.revision AND datetime >= :dt:", ['dt' => $datetime]);
+        $income = 0;
+        $tax = 0;
+        foreach($res as $r) {
+            if ($r->mehrwertsteuer_voll) {
+                $income += round($r->price * $r->menge * 1.19, 2);
+                $tax += round($r->price * $r->menge * 0.19, 2);
+            }
+            else {
+                $income += round($r->price * $r->menge * 1.07, 2);
+                $tax += round($r->price * $r->menge * 0.07, 2);
+            }
+        }
+        return [$income, $tax];
+    }
+
+    /**
+     * Returns the income and the taxes
+     * 
+     */
+    public function getIncomeBetween($start, $end) {
+        $res = $this->modelsManager->executeQuery("SELECT menge, price, mehrwertsteuer_voll
+        FROM Transaktionen, Warentransaktionen, Warenrevisionen
+        WHERE Transaktionen.trans_id = Warentransaktionen.trans_id AND waren_id = id 
+        AND Warentransaktionen.revision = Warenrevisionen.revision AND datetime >= :start: AND datetime <= :end:", ['start' => $start, 'end' => $end]);
+        $income = 0;
+        $tax = 0;
+        $income7 = 0;
+        $tax7 = 0;
+        foreach($res as $r) {
+            if ($r->mehrwertsteuer_voll) {
+                $income += $r->price * $r->menge;
+                $tax += round($r->price * 0.19, 2) * $r->menge ;
+            }
+            else {
+                $income7 += $r->price * $r->menge;
+                $tax7 += round($r->price * 0.07, 2) * $r->menge;
+            }
+        }
+        return [$income7, $tax7, $income, $tax];
+    }
+
     /**
      * Returns table name mapped in the model.
      *

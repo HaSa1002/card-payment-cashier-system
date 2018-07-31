@@ -1,7 +1,7 @@
 <?php
     echo $this->tag->form(
         [
-            "",
+            "waren/doDelete/$id",
             "autocomplete" => "off",
             "class" => "form-signin"
         ]
@@ -18,7 +18,7 @@
 </div>
 <div class="btn-group d-flex">
     <?php echo $this->tag->submitButton(["Löschen", "class" => "btn btn-lg btn-danger flex-fill"]);
-    echo $this->tag->linkTo(["verkauf/overview/", "Abbrechen", "class" => "btn btn-lg btn-primary flex-fill"]);
+    echo $this->tag->linkTo(["waren/overview/", "Abbrechen", "class" => "btn btn-lg btn-primary flex-fill"]);
     ?>
 </div>
 <?php echo $this->tag->endForm(); ?>

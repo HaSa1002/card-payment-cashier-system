@@ -1,9 +1,10 @@
 <?php
 
-class AdminController extends \Phalcon\Mvc\Controller
+class AdminController extends ControllerBase
 {
 
-    public function indexAction(){
+    public function indexAction() {
+        if (!parent::authorized(ControllerBase::ADMIN)) return;
         if ($this->request->isPost()) {
             $ausweis = $this->request->getPost('ausweis', 'int');
             $user = Users::findFirstByAusweis($ausweis);

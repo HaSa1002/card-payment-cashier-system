@@ -48,6 +48,15 @@ class Kartentransaktionen extends \Phalcon\Mvc\Model
         $this->setSource("kartentransaktionen");
     }
 
+
+    /**
+     * Returns the sum of the transactions
+     */
+    public function getSumSince($dt) {
+        return round($this->modelsManager->executeQuery("SELECT SUM(amount) AS sum FROM Kartentransaktionen
+        WHERE datetime >= :dt:", ['dt' => $dt])->getFirst()['sum'], 2);
+    }
+
     /**
      * Returns table name mapped in the model.
      *

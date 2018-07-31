@@ -97,7 +97,9 @@ $di->set('flash', function () {
         'error'   => 'alert alert-danger',
         'success' => 'alert alert-success',
         'notice'  => 'alert alert-info',
-        'warning' => 'alert alert-warning'
+        'warning' => 'alert alert-warning',
+        'primary' => 'alert alert-primary',
+        'secondary' => 'alert alert-secondary'
     ]);
 });
 
@@ -105,6 +107,8 @@ $di->set('flash', function () {
  * Start the session the first time some component request the session service
  */
 $di->setShared('session', function () {
+    ini_set('session.gc_maxlifetime', 1200);
+
     $session = new SessionAdapter();
     $session->start();
 

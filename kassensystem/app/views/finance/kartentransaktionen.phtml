@@ -1,0 +1,37 @@
+<div class="d-print-none">
+<?php
+    echo $this->getContent();
+    echo $this->tag->form([
+        'finance/kartentransaktionen',
+        'class' => 'form form-inline'
+    ]);
+?>
+<div class="input-group" style="margin-bottom: 1rem">
+<div class="form-label-group input-group-prepend" style="margin-bottom: 0rem">
+    <input type="date" class="form-control" name="dt" id="dt"/>
+    <label for="dt">frühester Zeitpunkt</label>
+</div>
+    <input type="time" class="form-control" name="t" id="t"/>
+<div class="input-group-append">
+<?php echo $this->tag->submitButton(["Berechnen", "class"=> "btn btn-lg btn-primary"]); 
+    echo "</div></div>";
+    echo $this->tag->endForm();
+?>
+</div>
+
+<table class="table table-hover table-sm">
+    <thead>
+        <tr><th>Transaktion</th><th>Kunde</th><th>Verkäufer</th><th>Betrag</th><th>Datum und Uhrzeit</th></tr>
+    </thead>
+    <tbody>
+        <?php foreach($t as $transaction): ?>
+        <tr>
+            <th><?php echo $transaction->trans_id ?></th>
+            <td><?php echo $transaction->user ?></td>
+            <td><?php echo $transaction->vertreter ?></td>
+            <td><?php echo str_replace('.', ',', $transaction->amount) ?></td>
+            <td><?php echo $transaction->datetime ?></td>
+        </tr>
+        <?php endforeach ?>
+    </tbody>
+</table>

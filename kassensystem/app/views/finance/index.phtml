@@ -1,0 +1,28 @@
+<?php
+    echo $this->tag->form(
+        [
+            "finance/",
+            "autocomplete" => "off",
+            "class" => "form-signin"
+        ]
+    );
+?>
+
+<div class="text-center mb-4">
+    <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
+    <h2>Cafeteria Kassensystem</h1>
+    <p class="lead">
+        Bitte eine Aktion wählen.
+    </p>
+    <?php echo $this->getContent() ?>
+</div>
+
+    <?php echo $this->tag->linkTo(["finance/register/", "Kasse", "class" => "btn btn-lg btn-success btn-block"]);
+    echo $this->tag->linkTo(["finance/income/", "Einkommen & Steuern", "class" => "btn btn-lg btn-danger btn-block"]);
+    echo $this->tag->linkTo(["finance/transaction/", "Transaktionen", "class" => "btn btn-lg btn-primary btn-block"]);
+    echo $this->tag->linkTo(["finance/kartentransaktionen/", "Ein- und Auszahlungen", "class" => "btn btn-lg btn-secondary btn-block"]);
+    echo $this->tag->linkTo(["finance/printTransaction/", "Detailtransaktion", "class" => "btn btn-lg btn-info btn-block"]);   
+    
+    ?>
+
+<?php echo $this->tag->endForm(); ?>

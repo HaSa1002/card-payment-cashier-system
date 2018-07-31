@@ -1,0 +1,40 @@
+<div class="flex-row mx-auto">
+<div class"d-print-none">
+    <?php echo $this->getContent() ?>
+    
+</div>
+<h1><img src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="54" height="54" style="margin-top: -.6rem;"/>
+Quittung <small>#<?php echo $trans_id ?></small></h1><br/>
+</div>
+<div class="flex-row">
+    <table class="table table-hover table-sm">
+        <thead>
+            <tr><th>Warennummer</th><th>Produkt</th><th>Menge</th><th>Preis</th></tr>
+        </thead>
+        <tbody>
+            <?php foreach($waren as $ware): ?>
+            <tr><th><?php echo $ware['id'] ?></td>
+                <td><?php echo $ware['description'] ?></td>
+                <td><?php echo $ware['menge'] ?></td>
+                <td><?php echo str_replace('.', ',', round($ware['price'] * ($ware['mehrwertsteuer_voll'] ? 1.19 : 1.07), 2))."€ "; if ($ware['mehrwertsteuer_voll']) echo "A"; else echo "B"; ?></td>
+            </tr>
+            <?php endforeach ?>
+        </tbody>
+        <tfoot>
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><th>MwSt</th><th>Netto</th><th>Steuer</th><th>Brutto</th></tr>
+            <tr><th>A = 19%</th><td><?php echo str_replace('.', ',', $a_n) ?></td><td><?php echo str_replace('.', ',', $a_s) ?></td><td><?php echo str_replace('.', ',', $a_b) ?></td></tr>
+            <tr><th>B = 7%</th><td><?php echo str_replace('.', ',', $b_n) ?></td><td><?php echo str_replace('.', ',', $b_s) ?></td><td><?php echo str_replace('.', ',', $b_b) ?></td></tr>
+            <tr><th>Summe</th><td><?php echo str_replace('.', ',', $n) ?></td><td><?php echo str_replace('.', ',', $s) ?></td><td><?php echo str_replace('.', ',', $b) ?></td></tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="flex-row mx-auto">
+    <p>Es bediente Sie <?php echo $vertreter ?>.</p>
+    <?php if(isset($guthaben)): ?>
+    <div class="d-print-none">
+    <p>Guthaben: <?php echo $guthaben ?><p>
+    </div>
+    <?php endif ?>
+</div>

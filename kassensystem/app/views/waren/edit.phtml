@@ -12,29 +12,128 @@ echo $this->tag->form(["", "class" => "form-signin"]); ?>
 </div>
 
 <div class="form-label-group">
-    <?php echo $this->tag->select(["source", $sources, "class" => "form-control", "active" => 10]) ?>
+    <?php $this->tag->displayTo("source", $active_source); echo $this->tag->select(["source", $sources, "using" => ['id', 'name'], "class" => "form-control", "active" => 10]); ?>
     
 </div>
 
+<div class="input-group">
+        <div class="form-label-group input-group-prepend flex-fill">
+            <?php echo $this->tag->textField(["s_preis", "size" => 6, "id" => "s_preis", "class" => "form-control", "placeholder" => "Preis", "required" => "", "value" => $s_price]) ?>
+            <label for="s_preis">Einkaufspreis (netto)</label>
+        </div>
+        <div class="input-group-append btn-group-toggle margin-b-auto" data-toggle="buttons" id="s_m">
+                <label class="btn btn-primary fit-label <?php if (!$s_mwst) echo "active" ?>" id="s_m7">
+                    <input type="radio" name="s_mwst" <?php if (!$s_mwst) echo "checked" ?> value="7">
+                    7% MwSt
+                </label>
+                <label class="btn btn-primary fit-label <?php if ($s_mwst) echo "active" ?>" id="s_m19">
+                    <input type="radio" name="s_mwst" <?php if ($s_mwst) echo "checked" ?> value="19">
+                    19% MwSt
+                </label>
+            </div>
+    </div>
+    <div class="form-label-group">
+            <?php echo $this->tag->textField(["e_brutto", "size" => 6, "id" => "e_brutto", "class" => "form-control", "placeholder" => "", "required" => ""]) ?>
+            <label for="e_brutto">Einkaufspreis (brutto)</label>
+        </div>
+
+<div class="input-group">
+    <div class="form-label-group input-group-prepend flex-fill">
+        <?php echo $this->tag->textField(["preis", "size" => 6, "id" => "preis", "class" => "form-control", "placeholder" => "Preis", "required" => "", "value" => $price]) ?>
+        <label for="preis">Verkaufspreis (netto)</label>
+    </div>
+    <div class="input-group-append btn-group-toggle margin-b-auto" data-toggle="buttons" id="m">
+        <label class="btn btn-primary fit-label <?php if (!$mwst) echo "active" ?>" id="m7">
+            <input type="radio" name="mwst" <?php if (!$mwst) echo "checked" ?> value="7">
+            7% MwSt
+        </label>
+        <label class="btn btn-primary fit-label <?php if ($mwst) echo "active" ?>" id="m19">
+            <input type="radio" name="mwst" <?php if ($mwst) echo "checked" ?> value="19">
+            19% MwSt
+        </label>
+    </div>
+</div>
 <div class="form-label-group">
-    <?php echo $this->tag->textField(["preis", "size" => 6, "id" => "preis", "class" => "form-control", "placeholder" => "Preis", "required" => "", "value" => $s_price]) ?>
-    <label for="preis">Einkaufspreis</label>
-</div>
-<div class="custom-control custom-checkbox form-group">
-    <input type="checkbox" name="mwst" id="mwst" class="custom-control-input" <?php if ($s_mwst_full) echo "checked" ?>>
-    <label for="mwst" class="custom-control-label">19% Mehrwertsteuer?</label>
-</div>
-<hr>
-<div class="form-label-group">
-    <?php echo $this->tag->textField(["preis", "size" => 6, "id" => "preis", "class" => "form-control", "placeholder" => "Preis", "required" => "", "value" => $price]) ?>
-    <label for="preis">Verkaufspreis</label>
-</div>
-<div class="custom-control custom-checkbox form-group">
-    <input type="checkbox" name="mwst" id="mwst" class="custom-control-input" <?php if ($mwst) echo "checked" ?>>
-    <label for="mwst" class="custom-control-label">19% Mehrwertsteuer?</label>
-</div>
+        <?php echo $this->tag->textField(["v_brutto", "size" => 6, "id" => "v_brutto", "class" => "form-control", "placeholder" => "", "required" => ""]) ?>
+        <label for="v_brutto">Verkaufspreis (brutto)</label>
+    </div>
+
+
 <div class="btn-group btn-group-lg d-flex">
-    <?php echo $this->tag->linkTo(["waren", "Abbrechen", "class" => "btn btn-danger flex-fill"]);
+    <?php echo $this->tag->linkTo(["waren/overview", "Abbrechen", "class" => "btn btn-danger flex-fill"]);
     echo $this->tag->submitButton(["Speichern", "class" => "btn btn-success flex-fill"]) ?>
 </div>
 </div>
+
+<script>
+var clicked = <?php if($mwst) echo "false"; else echo "true"; ?>; /* Verkaufspreis true = 1.07 */
+var clicked_e = <?php if($s_mwst) echo "false"; else echo "true"; ?>; /* Einkaufspreis true = 1.07 */
+
+function toBrutto(src, dest, mwst) {
+    let p = $(src).val().replace(',', '.') * mwst;
+    p = p.toFixed(2);    
+    $(dest).val(p.replace('.', ','));
+}
+
+function toNetto(src, dest, mwst) {
+    let p = $(src).val().replace(',', '.') / mwst;
+    p = p.toFixed(2);    
+    $(dest).val(p.replace('.', ','));
+}
+
+$('document').ready(function() {
+    if (clicked)
+            toBrutto('#preis', '#v_brutto', 1.07);
+        else
+            toBrutto('#preis', '#v_brutto', 1.19);
+
+    if (clicked_e)
+            toBrutto('#s_preis', '#e_brutto', 1.07);
+        else
+            toBrutto('#s_preis', '#e_brutto', 1.19);
+
+    $("#m7").click(function() {
+        clicked = true;
+        toBrutto('#preis', '#v_brutto', 1.07);
+    });
+
+    $("#m19").click(function() {
+        clicked = false;
+        toBrutto('#preis', '#v_brutto', 1.19);
+    });
+
+
+    $("#s_m7").click(function() {
+        clicked_e = true;
+        toBrutto('#s_preis', '#e_brutto', 1.07);
+    });
+
+    $("#s_m19").click(function() {
+        clicked_e = false;
+        toBrutto('#s_preis', '#e_brutto', 1.19);
+    });
+
+
+    $("#preis").change(function () {
+        let m = 1.19;
+        if (clicked) m = 1.07;
+        toBrutto('#preis', '#v_brutto', m);
+    });
+    $("#s_preis").change(function () {
+        let m = 1.19;
+        if (clicked_e) m = 1.07;
+        toBrutto('#s_preis', '#e_brutto', m);
+    });
+    $("#v_brutto").change(function () {
+        let m = 1.19;
+        if (clicked) m = 1.07;
+        toNetto('#v_brutto', '#preis', m);
+    });
+    $("#e_brutto").change(function () {
+        let m = 1.19;
+        if (clicked_e) m = 1.07;
+        toNetto('#e_brutto', '#s_preis', m);
+    });
+
+}); 
+</script>

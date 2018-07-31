@@ -1,0 +1,35 @@
+<?php
+    echo $this->tag->form(
+        [
+            "",
+            "autocomplete" => "off",
+            "class" => "form-signin"
+        ]
+    );
+?>
+
+<div class="text-center mb-4">
+    <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
+    <h2>Cafeteria Kassensystem</h1>
+    <p class="lead">
+        Bitte den Zielbereich wählen.
+    </p>
+    <?php echo $this->getContent() ?>
+</div>
+
+    <?php 
+        if ($level != 0) {
+            if ($level % ControllerBase::CASHIER == 0) 
+                echo $this->tag->linkTo(["cashier/", "Verkauf", "class" => "btn btn-lg btn-success btn-block"]);
+            if ($level % ControllerBase::CARDS == 0)
+                echo $this->tag->linkTo(["karten/", "Guthaben", "class" => "btn btn-lg btn-danger btn-block"]);
+            if ($level % ControllerBase::GOODS == 0)
+                echo $this->tag->linkTo(["waren/", "Ein- und Verkauf", "class" => "btn btn-lg btn-primary btn-block"]);
+            if ($level % ControllerBase::FINANCE == 0)
+                echo $this->tag->linkTo(["finance/", "Finanzen", "class" => "btn btn-lg btn-secondary btn-block"]);   
+            if ($level % ControllerBase::ADMIN == 0)
+                echo $this->tag->linkTo(["admin/", "Admin", "class" => "btn btn-lg btn-info btn-block"]);   
+        }
+    ?>
+
+<?php echo $this->tag->endForm(); ?>

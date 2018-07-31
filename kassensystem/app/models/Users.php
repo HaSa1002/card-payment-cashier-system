@@ -37,6 +37,13 @@ class Users extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Return the sum of the money in the register, owned by the people
+     */
+    public function getSum() {
+        return round($this->modelsManager->executeQuery("SELECT SUM(amount) AS sum FROM Users")->getFirst()['sum'], 2);
+    }
+
+    /**
      * Returns table name mapped in the model.
      *
      * @return string

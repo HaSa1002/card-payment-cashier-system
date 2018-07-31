@@ -42,6 +42,7 @@ class Warentransaktionen extends \Phalcon\Mvc\Model
         $this->setSource("warentransaktionen");
     }
 
+
     /**
      * Returns table name mapped in the model.
      *

@@ -1,24 +1,29 @@
 <div class="row">
     <?php echo $this->getContent() ?>
-    <table class="table table-hover">
+    <table class="table table-hover table-sm">
         <thead>
-            <tr><th>Warennummer</th><th>Produkt</th><th>Preis</th><th>Aktionen</th></tr>
+            <tr><th>Warennummer</th><th>Produkt</th><th>Menge</th><th>Preis</th><th>Aktionen</th></tr>
         </thead>
         <tbody>
             <?php foreach($page->items as $ware): ?>
-            <tr><th><?php echo $ware->id ?></td>
-                <td><?php echo $ware->description ?></td>
-                <td><?php echo str_replace('.', ',', $ware->price)."€ "; if ($ware->mehrwertsteuer_voll) echo "A"; else echo "B"; ?></td>
+            <tr><th><?php echo $ware['id'] ?></td>
+                <td><?php echo $ware['description'] ?></td>
+                <td><?php echo $ware['menge'] ?></td>
+                <td><?php echo str_replace('.', ',', round($ware['price'] * ($ware['mehrwertsteuer_voll'] ? 1.19 : 1.07), 2))."€ "; if ($ware['mehrwertsteuer_voll']) echo "A"; else echo "B"; ?></td>
                 <td><div class="btn-group">
-                <?php echo $this->tag->linkTo(["cashier/delete/$ware->id/$page->current/$perPage", "Löschen", "class" => "btn btn-sm btn-outline-danger"]);
+                <?php echo $this->tag->linkTo(["cashier/delete/".$ware['id']."/$page->current/$perPage", "Löschen", "class" => "btn btn-sm btn-outline-danger"]);
                 ?>
                 </div>
                 </td>
             </tr>
             <?php endforeach ?>
         </tbody>
-    	<tfoot>
-        <tr><th>A: 19 % MwSt.</th><th>B: 7 % MwSt.</th><th>Endpreis</th><th>MwSt. Beträge</th></tr>
+        <tfoot>
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><th>MwSt</th><th>Netto</th><th>Steuer</th><th>Brutto</th></tr>
+            <tr><th>A = 19%</th><td><?php echo str_replace('.', ',', $a_n) ?></td><td><?php echo str_replace('.', ',', $a_s) ?></td><td><?php echo str_replace('.', ',', $a_b) ?></td></tr>
+            <tr><th>B = 7%</th><td><?php echo str_replace('.', ',', $b_n) ?></td><td><?php echo str_replace('.', ',', $b_s) ?></td><td><?php echo str_replace('.', ',', $b_b) ?></td></tr>
+            <tr><th>Summe</th><td><?php echo str_replace('.', ',', $n) ?></td><td><?php echo str_replace('.', ',', $s) ?></td><td><?php echo str_replace('.', ',', $b) ?></td></tr>
         </tfoot>
     </table>
 </div>

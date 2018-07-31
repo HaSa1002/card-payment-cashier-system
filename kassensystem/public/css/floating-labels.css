@@ -9,12 +9,6 @@ body {
 }
 
 body {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-align: center;
-  align-items: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
   background-color: #f5f5f5;
 }
 
@@ -25,13 +19,18 @@ body {
   margin: auto;
 }
 
+.container {
+  margin: auto;
+}
+
 .form-label-group {
   position: relative;
   margin-bottom: 1rem;
 }
 
 .form-label-group > input,
-.form-label-group > label {
+.form-label-group > label,
+.fit-label {
   padding: var(--input-padding-y) var(--input-padding-x);
 }
 
@@ -79,4 +78,21 @@ body {
   padding-bottom: calc(var(--input-padding-y) / 3);
   font-size: 12px;
   color: #777;
+}
+
+
+/* Custom Styles by Johannes Witt */
+
+.margin-b-auto {
+  margin-bottom: auto;
+}
+
+.input-group-left > input{
+  border-top-right-radius: 0rem;
+  border-bottom-right-radius: 0rem;
+}
+
+.input-group-right > input {
+  border-top-left-radius: 0rem;
+  border-bottom-left-radius: 0rem;
 }

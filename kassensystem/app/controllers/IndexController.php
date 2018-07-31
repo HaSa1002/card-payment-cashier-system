@@ -4,7 +4,9 @@ class IndexController extends ControllerBase
 {
 
     public function indexAction() {
-        if ($this->session->has('access')) {
+        if (!$this->session->has('access'))
+            $this->session->set('access', 0);
+
             if ($this->session->get('access') == 0 ) {
                 if ($this->request->isPost()) {
                     $ausweis = $this->request->getPost('ausweis', 'int');
@@ -25,66 +27,40 @@ class IndexController extends ControllerBase
                     }
                 }
             }
-        } else {
-            $this->session->set('access', 0);
-        }
-
         switch ($this->session->get('access')) {
-            case 1: //Cashier
-            $this->dispatcher->forward([
-                'controller' => 'cashier',
-                'action' => 'index'
-            ]);
-            break;
-            case 2: //Kartentransaktionen
-            $this->dispatcher->forward([
-                'controller' => 'karten',
-                'action' => 'index'
-            ]);
-            break;
-            case 3: //Finance
-            $this->dispatcher->forward([
-                'controller' => 'finance',
-                'action' => 'index'
-            ]);
-            break;
-            case 4: //sellers
-            $this->dispatcher->forward([
-                'controller' => 'sellers',
-                'action' => 'index'
-            ]);
-            break;
-            case 5: //buyers
-            $this->dispatcher->forward([
-                'controller' => 'buyers',
-                'action' => 'index'
-            ]);
-            break;
-            case 6: //admin
-            $this->dispatcher->forward([
-                'controller' => 'admin',
-                'action' => 'index'
-            ]);
-            break;
-            /*
-            case 0: // No access rights or not signed in
+            case ControllerBase::CASHIER: //Cashier
+                $dest = $this->url->get('cashier/index');
+                break;
+            case ControllerBase::CARDS: //Kartentransaktionen
+                $dest = $this->url->get('karten/index');
+                break;
+            case ControllerBase::GOODS: //Waren
+                $dest = $this->url->get('waren/index');
+                break;
+            case ControllerBase::FINANCE: //Finanzen
+                $dest = $this->url->get('finance/index');
+                break;
+            case ControllerBase::ADMIN: //Admin
+                $dest = $this->url->get('admin/index');
+                break;
+            case 0: break;
             default:
-            $this->dispatcher->forward([
-                'controller' => 'index',
-                'action' => 'index'
-            ]);
-            break;
-            */
-        }      
+                $dest = $this->url->get('index/select');
+        }
+        if (isset($dest))
+            echo "<script type=\"text/javascript\">window.location = \"$dest\";</script>";
+    }
+    
+    public function selectAction() {
+        if (!$this->session->has('access') || $this->session->get('access') == 0) return $this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
+        $this->view->level = $this->session->get('access');
     }
 
     public function logoutAction() {
         $this->session->destroy();
         $this->session->start();
-        $this->dispatcher->forward([
-            "controller" => "index",
-            "action" => "index"
-        ]);
+        $index = $this->url->get('index/index');
+        echo "<script type=\"text/javascript\">window.location = \"$index\";</script>";
     }
 }
 

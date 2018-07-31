@@ -1,0 +1,12 @@
+<nav class="navbar navbar-light fixed-top">
+    <a href="<?php echo $this->url->get('cashier/index') ?>" class="navbar-brand">
+    <img src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="30" height="30" class="d-inline-block align-top"/>
+    Cafeteria Kassensystem</a>
+    <a href="<?php echo $this->url->get('cashier/add/1/1/') ?>" class="nav-item nav-link">Neuer Kassiervorgang</a>
+    <a href="<?php echo $this->url->get('cashier/add/1/0/') ?>" class="nav-item nav-link mr-auto">Aktueller Kassiervorgang</a>
+    <a href="<?php echo $this->url->get('logout') ?>" class="mr-sm-2 nav-item nav-link">Logout</a>
+</nav>
+
+<div class="container d-flex flex-column">
+    <?php echo $this->getContent(); ?>
+</div>

@@ -4,17 +4,14 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Roro Kassensystem</title>
-        <!-- Bootstrap CSS -->
+        
         <link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->url->get('img/roroPay.svg')?>"/>
         <link rel="stylesheet" href="<?php echo $this->url->get('css/bootstrap.min.css') ?>"/>
         <link rel="stylesheet" href="<?php echo $this->url->get('css/floating-labels.css') ?>"/>
     </head>
-    <body>
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <body class="d-flex" style="flex-direction: column">
         <script src="<?php echo $this->url->get('js/jquery-3.3.1.min.js'); ?>"></script>
-        <div class="container">
-            <?php echo $this->getContent(); ?>
-        </div>
+        <?php echo $this->getContent(); ?>
         
         <script src="<?php echo $this->url->get('js/bootstrap.bundle.min.js'); ?>"></script>
     </body>

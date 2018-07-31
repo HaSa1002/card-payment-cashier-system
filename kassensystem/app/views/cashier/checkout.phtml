@@ -12,13 +12,13 @@
     <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
     <h2>Cafeteria Kassensystem</h1>
     <p class="lead">
-        Ausweisnummer eingeben, um <?php echo "$price Euro zu bezahlen.<br><strong>MwSt. A (19%): $mwstA €, MwSt. B (7%): $mwstB €.</strong>" ?>
+        Ausweisnummer eingeben, um <?php echo str_replace('.', ',', $b) ?> Euro zu bezahlen.
     </p>
     <?php echo $this->getContent() ?>
 </div>
 
 <div class="form-label-group">
-    <?php echo $this->tag->textField(["id", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer"]) ?>
+    <?php echo $this->tag->textField(["id", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer", "autofocus" => ""]) ?>
     <label for="fieldAusweis">Ausweisnummer</label>
 </div>
 

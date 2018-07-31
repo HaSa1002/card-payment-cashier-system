@@ -1,0 +1,14 @@
+<?php
+    echo $this->getContent();
+    echo $this->tag->form([
+        'finance/printTransaction',
+        'class' => 'form'
+    ]);
+?>
+<div class="form-label-group" style="">
+    <?php echo $this->tag->textField(["id", "class" => "form-control", "id" => "waren_id", "size" => 40, "placeholder" => "Warennummer", "autofocus" => ""]); ?>
+    <label for="waren_id">Transaktionsid</label>
+</div>
+<?php echo $this->tag->submitButton(["Suchen", "class"=> "btn btn-lg btn-primary"]); 
+    echo $this->tag->endForm();
+?>

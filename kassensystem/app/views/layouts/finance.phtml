@@ -1,0 +1,15 @@
+<nav class="navbar navbar-light" style="margin-bottom: 2rem">
+    <a href="<?php echo $this->url->get('finance/index') ?>" class="navbar-brand">
+    <img src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="30" height="30" class="d-inline-block align-top"/>
+    Cafeteria Kassensystem</a>
+    <a href="<?php echo $this->url->get('finance/register') ?>" class="nav-item nav-link">Kasse</a>
+    <a href="<?php echo $this->url->get('finance/income') ?>" class="nav-item nav-link">Einkommen & Steuern</a>
+    <a href="<?php echo $this->url->get('finance/transaction') ?>" class="nav-item nav-link">Transaktionen</a>
+    <a href="<?php echo $this->url->get('finance/kartentransaktioenn') ?>" class="nav-item nav-link">Ein- und Auszahlungen</a>
+    <a href="<?php echo $this->url->get('finance/printTransaction') ?>" class="nav-item nav-link mr-auto">Detailtransaktion</a>
+    <a href="<?php echo $this->url->get('logout') ?>" class="mr-sm-2 nav-item nav-link">Logout</a>
+</nav>
+
+<div class="container d-flex flex-column">
+    <?php echo $this->getContent(); ?>
+</div>

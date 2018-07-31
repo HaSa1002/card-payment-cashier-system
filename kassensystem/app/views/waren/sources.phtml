@@ -1,7 +1,7 @@
 <?php
     echo $this->tag->form(
         [
-            "cashier/doDelete/$page/$perPage/$id",
+            "",
             "autocomplete" => "off",
             "class" => "form-signin"
         ]
@@ -12,13 +12,16 @@
     <img class="mb-4" src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="72" height="72" />
     <h2>Cafeteria Kassensystem</h1>
     <p class="lead">
-        Soll die Ware (<?php echo $id ?>) gelöscht werden?
+        Bitte die Quellbezeichnung angeben.
     </p>
     <?php echo $this->getContent() ?>
 </div>
-<div class="btn-group d-flex">
-    <?php echo $this->tag->submitButton(["Löschen", "class" => "btn btn-lg btn-danger flex-fill"]);
-    echo $this->tag->linkTo(["cashier/add/$page/0/$perPage", "Abbrechen", "class" => "btn btn-lg btn-primary flex-fill"]);
-    ?>
+
+<div class="form-label-group">
+    <?php echo $this->tag->textField(["source", "size" => 100, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Quelle", "autofocus" => ""]) ?>
+    <label for="fieldAusweis">Quelle</label>
 </div>
+
+<?php echo $this->tag->submitButton(["Hinzufügen", "class" => "btn btn-lg btn-primary btn-block"]) ?>
+
 <?php echo $this->tag->endForm(); ?>

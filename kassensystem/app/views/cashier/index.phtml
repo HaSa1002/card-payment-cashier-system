@@ -1,7 +1,7 @@
 <?php
     echo $this->tag->form(
         [
-            "karten/",
+            "cashier/",
             "autocomplete" => "off",
             "class" => "form-signin"
         ]
@@ -17,7 +17,9 @@
     <?php echo $this->getContent() ?>
 </div>
 
-    <?php echo $this->tag->linkTo(["cashier/add/1/10/true", "Kassieren", "class" => "btn btn-lg btn-success btn-block"]);   
+    <?php 
+    echo $this->tag->linkTo(["cashier/add/1/10/true", "Aktueller Kassiervorgang", "class" => "btn btn-lg btn-success btn-block"]);   
+    echo $this->tag->linkTo(["cashier/add/1/10/true", "Neuer Kassiervorgang", "class" => "btn btn-lg btn-secondary btn-block"]);   
     ?>
 
 <?php echo $this->tag->endForm(); ?>
