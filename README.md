@@ -14,6 +14,19 @@ If you use this software and modify it's core parts, please think of submiting i
 # Language #
 As I have a set deadline and as I doing it for a german school, this project will be in German. I am going to translate and unify it in late august/ mid september.
 
+# Current Tasks #
+- Finding a nice way of logging
+- Add logs to all important actions (basically all :D)
+- Add missing form validations (very important, even though phql prevents SQL Injections...)
+- Make the software more configurable (branding)
+- Make all texts translatable and exclude them into lang files
+- Add a lot documenary
+- Make the code clearer and better readable
+- Make the Software understandable in english
+
+This is just a short notice of ToDos for me, so that I keep on track what I wanted to do next. The tasks are just a help and nether is this list prioritizing any task nor is a task carved in stone. If you want to add something, the issues are open!
+
+
 # Installation #
 1. Install a webserver (i.e. [XAMPP](https://www.apachefriends.org/index.html))
 2. Follow the installation guide of phalcon found [here](https://github.com/phalcon/cphalcon) or [here for XAMPP](https://docs.phalconphp.com/en/3.3/webserver-xampp), the downloads are [here](https://github.com/phalcon/cphalcon/releases/tag/v3.4.0)
@@ -28,8 +41,10 @@ As I have a set deadline and as I doing it for a german school, this project wil
 4. Work on parts of the system and submit them to the project
 5. Discuss on design (in tecnical and visual manner) and workflow
 
-# The Rest #
-This project uses [Bootstrap](https://github.com/twbs/bootstrap/).
+# Third party libraries #
+- [Bootstrap](https://github.com/twbs/bootstrap/)
+- [cphalcon](https://github.com/phalcon/cphalcon)
+- [jQuery](https://github.com/jquery/jquery)
 
 # Contact #
 [Discord](https://discord.gg/hVZAzyr)
