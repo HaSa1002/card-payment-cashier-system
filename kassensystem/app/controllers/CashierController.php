@@ -36,7 +36,7 @@ class CashierController extends ControllerBase {
         foreach ($this->session->get('cart') as $e) {
             if (!$place_komma) $place_komma = true;
             else $res .= ",";
-            $res .= htmlspecialchars($e[0]);
+            $res .= $this->filter->sanitize($e[0], 'int');
         }
         
         if ($res == "") {
@@ -266,7 +266,7 @@ class CashierController extends ControllerBase {
         if ($t->save() === false) {
             $this->flash->error("Zahlung konnte nicht durchgeführt werden, da es einen internen Fehler gab. (0x1t)");
             $this->db->rollback();
-            //Log
+            //Log wichtig
             return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
         }
         $trans_id = $t->trans_id;
@@ -322,7 +322,7 @@ class CashierController extends ControllerBase {
             if ($w->save() === false) {
                 $this->falsh->error("Zahlung konnte aufgrund eines internen Fehlers nicht durchgeführt werden. (0xcbwt)");
                 $this->db->rollback();
-                //Log
+                //Log wichtig 
                 return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
             }
             $w_i++;
@@ -343,7 +343,7 @@ class CashierController extends ControllerBase {
         if ($user->save() === false) {
             $this->flash->error("Zahlung konnte nicht durchgeführt werden, da es einen internen Fehler gab. (0xcbu)");
             $this->db->rollback();
-            //Log
+            //Log wichtig
             return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
         }
         $this->db->commit();
