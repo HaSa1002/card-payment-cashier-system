@@ -1,2 +1,3 @@
 *.pem
 kassensystem/app/config/config.php
+kassensystem/app/log/log.txt
