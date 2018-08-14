@@ -1,0 +1,2 @@
+[Fri, 03 Aug 18 18:24:14 +0200][CRITICAL] [/kassensystem/public/index.php] User can't be saved.
+[Fri, 03 Aug 18 18:32:50 +0200][CRITICAL] [D:\xampp\htdocs\kassensystem\app\controllers\KartenController.phpKartenController::belegAction75] User can't be saved.
