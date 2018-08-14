@@ -3,3 +3,7 @@
 	RewriteRule  ^$ public/    [L]
 	RewriteRule  (.*) public/$1 [L]
 </IfModule>
+
+<FilesMatch “/.(pem|PEM)$”>
+deny from all
+</FilesMatch>

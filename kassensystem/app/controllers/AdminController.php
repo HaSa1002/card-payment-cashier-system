@@ -8,19 +8,17 @@ class AdminController extends ControllerBase
         if ($this->request->isPost()) {
             $ausweis = $this->request->getPost('ausweis', 'int');
             $user = Users::findFirstByAusweis($ausweis);
+            if (!$user) {
+                $user = new Users();
+                $user->ausweis = $ausweis;
+            }
             $user->pw = $this->request->getPost('pw', 'string');
             $user->access = $this->request->getPost('access', 'int');
-            if (!$user)
-                $user->ausweis = $ausweis;
             
-            $user->save(NULL, NULL, true);
-            $this->flash->success("Der Benutzer ($ausweis) wurde aktualisiert. (Access: $user->access)");
+            
+            if ($user->save() === false) $this->flash->error("Der Benutzer ($ausweis) wurde nicht aktualisiert. (Access: $user->access)");
+            else $this->flash->success("Der Benutzer ($ausweis) wurde aktualisiert. (Access: $user->access)");  
         }
-        /*
-        $this->dispatcher->forward([
-            "controller" => "admin",
-            "action" => "index"
-        ]); */
     }
 
     public function saveAction() {

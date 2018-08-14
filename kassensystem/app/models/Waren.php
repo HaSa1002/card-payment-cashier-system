@@ -27,7 +27,7 @@ class Waren extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("kassensystem");
-        $this->setSource("Waren");
+        $this->setSource("waren");
     }
 
     /**
@@ -37,7 +37,7 @@ class Waren extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'Waren';
+        return 'waren';
     }
 
     /**

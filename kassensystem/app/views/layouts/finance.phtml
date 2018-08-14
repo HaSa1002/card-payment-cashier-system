@@ -7,7 +7,22 @@
     <a href="<?php echo $this->url->get('finance/transaction') ?>" class="nav-item nav-link">Transaktionen</a>
     <a href="<?php echo $this->url->get('finance/kartentransaktioenn') ?>" class="nav-item nav-link">Ein- und Auszahlungen</a>
     <a href="<?php echo $this->url->get('finance/printTransaction') ?>" class="nav-item nav-link mr-auto">Detailtransaktion</a>
-    <a href="<?php echo $this->url->get('logout') ?>" class="mr-sm-2 nav-item nav-link">Logout</a>
+    <?php if ($this->session->has('ausweis')): ?> 
+    <div class="dropdown">
+        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <?php echo $this->session->get('ausweis') ?>
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="<?php echo $this->url->get('index/select') ?>">Bereichswahl</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="<?php echo $this->url->get('logout') ?>">Logout</a>
+        </div>
+    </div>
+
+    <?php else: ?>
+    <a href="<?php echo $this->url->get('index/index') ?>" class="mr-sm-2 nav-item nav-link">Einloggen</a>
+    <?php endif ?>
 </nav>
 
 <div class="container d-flex flex-column">

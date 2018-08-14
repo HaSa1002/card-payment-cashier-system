@@ -1,10 +1,10 @@
 <nav class="navbar navbar-light fixed-top">
-    <a href="<?php echo $this->url->get('karten/index') ?>" class="navbar-brand">
+    <a href="<?php echo $this->url->get('admin/index') ?>" class="navbar-brand">
     <img src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="30" height="30" class="d-inline-block align-top"/>
     Cafeteria Kassensystem</a>
-    <a href="<?php echo $this->url->get('karten/einzahlung') ?>" class="nav-item nav-link">Einzahlung</a>
-    <a href="<?php echo $this->url->get('karten/auszahlung') ?>" class="nav-item nav-link">Auszahlung</a>
-    <a href="<?php echo $this->url->get('karten/betrag') ?>" class="nav-item nav-link mr-auto">Guthaben</a>
+    <!-- <a href="<?php echo $this->url->get('admin/overview') ?>" class="nav-item nav-link">Warenübersicht</a>
+    <a href="<?php echo $this->url->get('waren/edit') ?>" class="nav-item nav-link">Ware hinzufügen</a>
+    <a href="<?php echo $this->url->get('waren/sources') ?>" class="nav-item nav-link mr-auto">Quelle hinzufügen</a> -->
     <?php if ($this->session->has('ausweis')): ?> 
     <div class="dropdown">
         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

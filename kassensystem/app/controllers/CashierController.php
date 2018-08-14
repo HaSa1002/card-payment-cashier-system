@@ -36,7 +36,7 @@ class CashierController extends ControllerBase {
         foreach ($this->session->get('cart') as $e) {
             if (!$place_komma) $place_komma = true;
             else $res .= ",";
-            $res .= $e[0];
+            $res .= htmlspecialchars($e[0]);
         }
         
         if ($res == "") {
@@ -107,7 +107,7 @@ class CashierController extends ControllerBase {
         foreach ($this->session->get('cart') as $e) {
             if (!$place_komma) $place_komma = true;
             else $res .= ",";
-            $res .= $e[0];
+            $res .= htmlspecialchars($e[0]);
         }
         
         if ($res == "") {
@@ -176,7 +176,7 @@ class CashierController extends ControllerBase {
         foreach ($this->session->get('cart') as $e) {
             if (!$place_komma) $place_komma = true;
             else $res .= ",";
-            $res .= $e[0];
+            $res .= htmlspecialchars($e[0]);
         }
         
         if ($res == "") {
@@ -276,7 +276,7 @@ class CashierController extends ControllerBase {
         foreach ($this->session->get('cart') as $e) {
             if (!$place_komma) $place_komma = true;
             else $res .= ",";
-            $res .= $e[0];
+            $res .= htmlspecialchars($e[0]);
         }
         
         if ($res == "") {

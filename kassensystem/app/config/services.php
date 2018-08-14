@@ -60,6 +60,10 @@ $di->setShared('view', function () {
 /**
  * Database connection is created based in the parameters defined in the configuration file
  */
+defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirname(__FILE__) . '/../..'));
+defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
+
+
 $di->setShared('db', function () {
     $config = $this->getConfig();
 
@@ -69,7 +73,14 @@ $di->setShared('db', function () {
         'username' => $config->database->username,
         'password' => $config->database->password,
         'dbname'   => $config->database->dbname,
-        'charset'  => $config->database->charset
+        'charset'  => $config->database->charset,
+        'options' => [
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
+            PDO::MYSQL_ATTR_SSL_CA => 'E:\\xampp\\htdocs\\kassensystem\\ca.pem',
+            PDO::MYSQL_ATTR_SSL_CERT => 'E:\\xampp\\htdocs\\kassensystem\\server-cert.pem',
+            PDO::MYSQL_ATTR_SSL_KEY => 'E:\\xampp\\htdocs\\kassensystem\\server-key.pem',
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+        ]
     ];
 
     if ($config->database->adapter == 'Postgresql') {
