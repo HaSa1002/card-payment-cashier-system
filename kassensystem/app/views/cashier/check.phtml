@@ -18,36 +18,69 @@
             </tr>
             <?php endforeach ?>
         </tbody>
-        <tfoot>
+        <!--<tfoot>
             <tr><td></td><td></td><td></td><td></td><td></td></tr>
             <tr><th>MwSt</th><th>Netto</th><th>Steuer</th><th>Brutto</th></tr>
             <tr><th>A = 19%</th><td><?php echo str_replace('.', ',', $a_n) ?></td><td><?php echo str_replace('.', ',', $a_s) ?></td><td><?php echo str_replace('.', ',', $a_b) ?></td></tr>
             <tr><th>B = 7%</th><td><?php echo str_replace('.', ',', $b_n) ?></td><td><?php echo str_replace('.', ',', $b_s) ?></td><td><?php echo str_replace('.', ',', $b_b) ?></td></tr>
             <tr><th>Summe</th><td><?php echo str_replace('.', ',', $n) ?></td><td><?php echo str_replace('.', ',', $s) ?></td><td><?php echo str_replace('.', ',', $b) ?></td></tr>
-        </tfoot>
+        </tfoot>-->
     </table>
+    <h4>Summe: <?php echo str_replace('.', ',', $b) ?></h4>
 </div>
-    <div class="row float-right">
-<?php echo $this->tag->linkTo(["cashier/checkout/", "Zahlen", "class" => "btn btn-lg btn-primary"]) ?>
-</div>
-    <div class="row justify-content-center">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li class="page-item">
-              <?php echo $this->tag->linkTo(["cashier/check/$page->before/$perPage", "<span aria-hidden=\"true\">&laquo;</span>
-                  <span class=\"sr-only\">Previous</span>", "class" => "page-link"]) ?>
-              </li>
-              <?php if ($page->current != $page->before): ?>
-              <li class="page-item"><?php echo $this->tag->linkTo(["cashier/check/$page->before/$perPage", "$page->before", "class" => "page-link"]) ?></li>
-              <?php endif ?>
-              <li class="page-item active"><?php echo $this->tag->linkTo(["cashier/check/$page->current/$perPage", "$page->current/$page->last", "class" => "page-link"]) ?></li>
-              <?php if ($page->current != $page->next): ?>
-              <li class="page-item"><?php echo $this->tag->linkTo(["cashier/check/$page->next/$perPage", "$page->next", "class" => "page-link"]) ?></li>
-              <?php endif ?>
-              <li class="page-item">
-              <?php echo $this->tag->linkTo(["cashier/check/$page->next/$perPage", "<span aria-hidden=\"true\">&raquo;</span>
-                  <span class=\"sr-only\">Next</span>", "class" => "page-link"]) ?>
-              </li>
-            </ul>
-        </nav>
+<div class="row float-right">
+    <?php echo $this->tag->form(
+            [
+                "cashier/beleg",
+                "autocomplete" => "off",
+                "class" => "form-inline"
+            ]
+        );
+    ?>
+    <div class="input-group" style="margin-bottom: 1rem">
+        <div class="input-group-prepend">
+        <?php
+            $img = "<img src=\"". $this->url->get('img/minus.svg')."\" alt =\"+\" width=\"31\" height=\"31\" class=\"d-inline-block align-top\"/>";
+            echo $this->tag->linkTo(["cashier/add", "Zurück $img", "class" => "btn btn-lg btn-primary"]) ?>
+        </div>
+        <div class="form-label-group" style="margin-bottom: 0rem">
+            <?php echo $this->tag->textField(["id", "size" => 16, "required" => "", "class" => "form-control", "id" => "fieldAusweis", "placeholder" => "Ausweisnummer", "autofocus" => ""]) ?>
+            <label for="fieldAusweis">Ausweisnummer</label>
+        </div>
+        <div class="input-group-append">
+            <?php echo $this->tag->submitButton(["Zahlen", "class" => "btn btn-lg btn-danger"]) ?>
+        </div>
     </div>
+</div>
+<div class="row justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item">
+          <?php echo $this->tag->linkTo(["cashier/check/$page->before/$perPage", "<span aria-hidden=\"true\">&laquo;</span>
+              <span class=\"sr-only\">Previous</span>", "class" => "page-link"]) ?>
+          </li>
+          <?php if ($page->current != $page->before): ?>
+          <li class="page-item"><?php echo $this->tag->linkTo(["cashier/check/$page->before/$perPage", "$page->before", "class" => "page-link"]) ?></li>
+          <?php endif ?>
+          <li class="page-item active"><?php echo $this->tag->linkTo(["cashier/check/$page->current/$perPage", "$page->current/$page->last", "class" => "page-link"]) ?></li>
+          <?php if ($page->current != $page->next): ?>
+          <li class="page-item"><?php echo $this->tag->linkTo(["cashier/check/$page->next/$perPage", "$page->next", "class" => "page-link"]) ?></li>
+          <?php endif ?>
+          <li class="page-item">
+          <?php echo $this->tag->linkTo(["cashier/check/$page->next/$perPage", "<span aria-hidden=\"true\">&raquo;</span>
+              <span class=\"sr-only\">Next</span>", "class" => "page-link"]) ?>
+          </li>
+        </ul>
+    </nav>
+</div>
+<script>
+$(document).ready(function() {
+    $(document).keyup(function(e) {
+        if (e.which == 109) {
+            window.location = "<?php echo $this->url->get("cashier/add") ?>";
+        }
+    })
+});
+
+</script>
+

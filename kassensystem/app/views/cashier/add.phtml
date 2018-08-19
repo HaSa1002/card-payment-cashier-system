@@ -1,24 +1,27 @@
 <div class="row">
 
-<?php
+<?php 
     echo $this->getContent();
     echo $this->tag->form([
         "cashier/add/$page->current/0/$perPage/",
-        'class' => 'form form-inline'
+        'class' => 'form form-inline',
+        'id' => "addWare"
     ]);
 ?>
 <div class="input-group" style="margin-bottom: 1rem">
-<div class="form-label-group input-group-right input-group" style="margin-bottom: 0rem">
-    <?php echo $this->tag->textField(["menge", "class" => "form-control", "id" => "menge", "size" => 40, "placeholder" => "Menge", "autofocus" => ""]); ?>
-    <label for="menge">Menge</label>
-</div>
 <div class="form-label-group input-group-left" style="margin-bottom: 0rem">
-    <?php echo $this->tag->textField(["id", "class" => "form-control", "id" => "waren_id", "size" => 40, "placeholder" => "Warennummer", "required" => ""]); ?>
+    <?php echo $this->tag->textField(["waren_id", "class" => "form-control", "id" => "waren_id", "size" => 40, "placeholder" => "Warennummer", "required" => "", "autofocus" => ""]); ?>
     <label for="waren_id">Warennummer</label>
 </div>
+<div class="form-label-group input-group-right input-group" style="margin-bottom: 0rem">
+    <?php echo $this->tag->textField(["menge", "class" => "form-control", "id" => "menge", "size" => 40, "placeholder" => "Menge"]); ?>
+    <label for="menge">Menge</label>
+</div>
+
 <div class="input-group-append btn-group">
 <?php echo $this->tag->submitButton(["Hinzufügen", "class"=> "btn btn-lg btn-primary"]); 
-    echo $this->tag->linkTo(["cashier/check", "Zahlen", "class" => "btn btn-lg btn-danger"]);
+    $img = "<img src=\"". $this->url->get('img/plus.svg')."\" alt =\"+\" width=\"31\" height=\"31\" class=\"d-inline-block align-top\"/>";
+    echo $this->tag->linkTo(["cashier/check", "Zahlen $img", "class" => "btn btn-lg btn-danger"]);
     echo "</div></div>";
     echo $this->tag->endForm();
 ?>
@@ -26,47 +29,104 @@
 <div class="row">
     <table class="table table-hover table-sm">
         <thead>
-            <tr><th>Warennummer</th><th>Produkt</th><th>Menge</th><th>Preis</th><th>Aktionen</th></tr>
+            <tr><th>Warennummer</th><th>Produkt</th><th>Menge</th><th>Preis</th></tr>
         </thead>
         <tbody>
             <?php foreach($page->items as $ware): ?>
-            <tr><th><?php echo $ware['id'] ?></td>
+            <tr class="<?php echo $ware['id'] ?>"><th><?php echo $ware['id'] ?></td>
                 <td><?php echo $ware['description'] ?></td>
                 <td><?php echo $ware['menge'] ?></td>
                 <td><?php echo str_replace('.', ',', round($ware['price'] * ($ware['mehrwertsteuer_voll'] ? 1.19 : 1.07), 2))."€ "; if ($ware['mehrwertsteuer_voll']) echo "A"; else echo "B"; ?></td>
-                <td><div class="btn-group">
-                <?php echo $this->tag->linkTo(["cashier/delete/".$ware['id']."/$page->current/$perPage", "Löschen", "class" => "btn btn-sm btn-outline-danger"]);
-                ?>
-                </div>
-                </td>
             </tr>
             <?php endforeach ?>
         </tbody>
-        <tfoot>
-            <tr><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><th>MwSt</th><th>Netto</th><th>Steuer</th><th>Brutto</th></tr>
-            <tr><th>Summe</th><td><?php echo str_replace('.', ',', $n) ?></td><td><?php echo str_replace('.', ',', $s) ?></td><td><?php echo str_replace('.', ',', $b) ?></td></tr>
-        </tfoot>
     </table>
-    <div class="row justify-content-center">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li class="page-item">
-              <?php echo $this->tag->linkTo(["cashier/add/$page->before/0/$perPage", "<span aria-hidden=\"true\">&laquo;</span>
-                  <span class=\"sr-only\">Previous</span>", "class" => "page-link"]) ?>
-              </li>
-              <?php if ($page->current != $page->before): ?>
-              <li class="page-item"><?php echo $this->tag->linkTo(["cashier/add/$page->before/0/$perPage", "$page->before", "class" => "page-link"]) ?></li>
-              <?php endif ?>
-              <li class="page-item active"><?php echo $this->tag->linkTo(["cashier/add/$page->current/0/$perPage", "$page->current/$page->last", "class" => "page-link"]) ?></li>
-              <?php if ($page->current != $page->next AND $page->next != 0): ?>
-              <li class="page-item"><?php echo $this->tag->linkTo(["cashier/add/$page->next/0/$perPage", "$page->next", "class" => "page-link"]) ?></li>
-              <?php endif ?>
-              <li class="page-item">
-              <?php echo $this->tag->linkTo(["cashier/add/$page->next/0/$perPage", "<span aria-hidden=\"true\">&raquo;</span>
-                  <span class=\"sr-only\">Next</span>", "class" => "page-link"]) ?>
-              </li>
-            </ul>
-        </nav>
-    </div>
+    <h4>Summe: <?php echo str_replace('.', ',', $b) ?></h4>
 </div>
+<div class="row justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item">
+          <?php echo $this->tag->linkTo(["cashier/add/$page->before/0/$perPage", "<span aria-hidden=\"true\">&laquo;</span>
+              <span class=\"sr-only\">Previous</span>", "class" => "page-link"]) ?>
+          </li>
+          <?php if ($page->current != $page->before): ?>
+          <li class="page-item"><?php echo $this->tag->linkTo(["cashier/add/$page->before/0/$perPage", "$page->before", "class" => "page-link"]) ?></li>
+          <?php endif ?>
+          <li class="page-item active"><?php echo $this->tag->linkTo(["cashier/add/$page->current/0/$perPage", "$page->current/$page->last", "class" => "page-link"]) ?></li>
+          <?php if ($page->current != $page->next AND $page->next != 0): ?>
+          <li class="page-item"><?php echo $this->tag->linkTo(["cashier/add/$page->next/0/$perPage", "$page->next", "class" => "page-link"]) ?></li>
+          <?php endif ?>
+          <li class="page-item">
+          <?php echo $this->tag->linkTo(["cashier/add/$page->next/0/$perPage", "<span aria-hidden=\"true\">&raquo;</span>
+              <span class=\"sr-only\">Next</span>", "class" => "page-link"]) ?>
+          </li>
+        </ul>
+    </nav>
+</div>
+
+<form class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="delete" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Löschen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-label-group">
+                    <input type="text" name="del_id" id="del_id" class="form-control" placeholder="Warennummer">
+                    <label for="del_id">Warennummer</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                <button type="submit" class="btn btn-primary">Löschen</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<script src="<?php echo $this->url->get('js/test.js') ?>", type="text/javascript"></script>
+<script>
+function clearCtrlInput(char) {
+    if ($("#waren_id").val().endsWith(char))
+        $("#waren_id").val($("#waren_id").val().substr(0, $("#waren_id").val().length - 2));
+    if ($("#menge").val().endsWith(char))
+        $("#menge").val($("#menge").val().substr(0, $("#menge").val().length - 2));
+    if ($("#del_id").val().endsWith(char))
+        $("#del_id").val($("#del_id").val().substr(0, $("#del_id").val().length - 2));
+}
+
+
+$(document).ready(function() {
+    $("#delete").on("hidden.bs.modal", function (e) {
+                $("#waren_id").focus();
+
+            });
+    $(document).keyup(function(e) {
+        if (e.which == 107) {
+            window.location = "<?php echo $this->url->get("cashier/check") ?>";
+        }
+        if (e.which == 109) {
+            $("#delete").modal('toggle');
+            $("#delete").on("shown.bs.modal", function (e) {
+                $("#del_id").focus();
+            });
+            clearCtrlInput("-");
+        }
+        if (e.which == 111) {
+            $("#waren_id").focus();
+            clearCtrlInput("/");
+        }
+        if (e.which == 106) {
+            $("#menge").focus();
+            clearCtrlInput("*");
+        }
+    });
+});
+
+</script>

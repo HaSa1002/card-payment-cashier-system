@@ -176,7 +176,7 @@ class FinanceController extends ControllerBase {
 
         $datetime = new DateTime($time, new DateTimeZone("europe/berlin"));
         $dbDate = $datetime->format("Y-m-d H:i:s");
-        $t = Kartentransaktionen::find(["datetime" => $dbDate]);
+        $t = Kartentransaktionen::find(["datetime" => $dbDate]); //FIXME
         
         $this->view->t = $t;
         

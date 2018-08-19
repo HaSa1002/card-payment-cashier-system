@@ -75,4 +75,20 @@ class Warentransaktionen extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+
+    /**
+     * Returns all Transactions since the val
+     * @var dt The Datetime
+     * @return false|array['id','user','vertreter','datetime','price','tax']
+     */
+    public function getSalesSince($dt = 0) {
+        return $this->modelsManager->executeQuery("SELECT waren_id, SUM(menge) AS menge
+        FROM Transaktionen, Warentransaktionen, Warenrevisionen
+        WHERE Transaktionen.trans_id = Warentransaktionen.trans_id AND waren_id = id 
+        AND Warentransaktionen.revision = Warenrevisionen.revision AND datetime >= :dt:
+        GROUP BY waren_id
+        ORDER BY menge DESC",
+        ['dt' => $dt]);
+    }
+
 }

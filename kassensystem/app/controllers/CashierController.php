@@ -2,12 +2,76 @@
 
 use Phalcon\Paginator\Adapter\NativeArray as Paginator;
 use Phalcon\Mvc\Model\Query;
+use Phalcon\Http\Response;
+
 
 class CashierController extends ControllerBase {
 
-    public function indexAction() { if (!parent::authorized(ControllerBase::CASHIER)) return; }
+    public function indexAction() { if (!parent::authorized(ControllerBase::CASHIER)) return;
+        return $this->dispatcher->forward(["action" => "add"]);
+    
+    }
 
-    public function checkinAction() { if (!parent::authorized(ControllerBase::CASHIER)) return; }
+    public function addWareAction() {
+        if (!parent::authorized(ControllerBase::CASHIER)) return;
+        // Create the response
+        $r = new Response();
+        $r->setStatusCode(403, 'Forbidden');
+        if ($this->request->isPost()) {
+            if ($this->request->isAjax()) {
+                if (!$this->session->has('cart'))
+                    $this->session->set('cart', []);    
+                //First, we need to check, if the ware is existent in the db
+
+                $ware = Waren::findFirstById($this->request->getPost('waren_id'));
+                if (!$ware || $ware->deleted) {
+                    $r->setStatusCode(406, 'Not acceptable');
+                    return $r;
+                }
+                $details = Warenrevisionen::findFirst(['conditions' => "id = $ware->id AND revision = $ware->cur_rev"]);
+                if (!$details) {
+                    $r->setStatusCode(407, 'Not acceptable');
+                    return $r;
+                }
+
+                
+                $cart = $this->session->get('cart');
+                $id = $ware->id;
+                $menge = $this->request->getPost('menge', 'int');
+                $addToSum = round($details->price * ($details->mehrwertsteuer_voll ? 1.19 : 1.07), 2);
+                $price = str_replace('.', ',', round($details->price * ($details->mehrwertsteuer_voll ? 1.19 : 1.07), 2)). "€";
+
+                if (empty($menge) || $menge == 0)
+                    $menge = 1;
+
+                foreach ($cart as $k => $v) {
+                    if ($cart[$k][0] == $ware->id) {
+                        if ($cart[$k][1] + $menge > 255) {
+                            $menge = 255 - $cart[$k][1];
+                        }
+                        $cart[$k][1] += $menge;
+                        $data = ['id' => $ware->id, 'name' => $details->description, 'menge' => $cart[$k][1], 'price' => $price, 'addToSum' => $addToSum * $menge];
+                        break;
+                    }
+                }
+                if (!isset($data)) {
+                    if ($menge > 255) $menge = 255;
+                    $cart[] = [$id, $menge];
+                    $data = ['id' => $ware->id, 'name' => $details->description, 'menge' => $menge, 'price' => $price, 'addToSum' => $addToSum * $menge];
+                } 
+                $this->session->set('cart', $cart);
+
+                $r->setStatusCode(200, 'OK');
+                $r->setContent(json_encode($data));
+                $this->view->disable();
+            }
+        }
+        return $r;
+    }
+
+
+
+
 
     public function addAction($page = 1, $reset = false, $perPage = 6) {
         if (!parent::authorized(ControllerBase::CASHIER)) return;
@@ -15,14 +79,13 @@ class CashierController extends ControllerBase {
             $this->flash->warning("Der Warenkorb wurde geleert.");
             $this->session->set('cart', []);
         }
-
-        if ($this->request->isPost()) {
-            if (!$this->session->has('cart'))
+        if (!$this->session->has('cart'))
                 $this->session->set('cart', []);
-            
-            if ($this->request->get('id', 'int') != "") {
+
+        if ($this->request->isPost()) { 
+            if ($this->request->get('waren_id', 'int') != "") {
                 $cart = $this->session->get('cart');
-                $id = $this->request->get('id', 'int');
+                $id = $this->request->get('waren_id', 'int');
                 $menge = $this->request->get('menge', 'int');
                 if (empty($menge) || $menge == 0)
                     $menge = 1;
@@ -133,7 +196,10 @@ class CashierController extends ControllerBase {
                 if ($e[0] == $ware['id']) {
                     if (!isset($waren[$i]['menge'])) $waren[$i]['menge'] = 0;
                     $waren[$i]['menge'] += $e[1];
-                    
+                    if ($e[1] > 255) {
+                        $waren[$i]['menge'] = 255;
+                        $this->flash->warning("Die Menge von $e[0] wurde auf 255 geändert.");
+                    } 
                 }
             }
             if ($ware['mehrwertsteuer_voll'] == "1") {
@@ -298,10 +364,15 @@ class CashierController extends ControllerBase {
         $this->view->b = 0;
 
         foreach ($waren as $ware) {
-            foreach ($this->session->get('cart') as $e) {
+            foreach ($this->session->get('cart') as $k => $e) {
                 if ($e[0] == $ware['id']) {
                     if (!isset($waren[$w_i]['menge'])) $waren[$w_i]['menge'] = 0;
                     $waren[$w_i]['menge'] += $e[1];
+                    if ($e[1] > 255) {
+                        $waren[$w_i]['menge'] = 255;
+                        $this->flash->warning("Die Menge von $e[0] wurde auf 255 geändert.");
+                    } 
+                        
                 }
             }
             if ($ware['mehrwertsteuer_voll'] == "1") {
@@ -320,7 +391,7 @@ class CashierController extends ControllerBase {
             $w->revision = $ware['revision'];
             $w->menge = $waren[$w_i]['menge'];
             if ($w->save() === false) {
-                $this->falsh->error("Zahlung konnte aufgrund eines internen Fehlers nicht durchgeführt werden. (0xcbwt)");
+                $this->flash->error("Zahlung konnte aufgrund eines internen Fehlers nicht durchgeführt werden. (0xcbwt)");
                 $this->db->rollback();
                 //Log wichtig 
                 return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
@@ -352,13 +423,60 @@ class CashierController extends ControllerBase {
         $this->view->waren = $waren;
         $this->view->trans_id = $t->trans_id;
         $this->view->vertreter = $t->vertreter;
+        
+        $this->flash->success("Der Kauf wurde durchgeführt. Verbleibendes Guthaben: $user->amount");
+        return $this->dispatcher->forward(["controller" => "cashier", "action" => "add"]);
+
     }
 
-    public function deleteAction($id, $page, $perPage) {
+    public function deleteAction() {
         if (!parent::authorized(ControllerBase::CASHIER)) return;
-        $this->view->id = $id;
-        $this->view->page = $page;
-        $this->view->perPage = $perPage;
+        $r = new Response();
+        $r->setStatusCode(403, 'Forbidden');
+        if ($this->request->isPost()) {
+            if ($this->request->isAjax()) {
+                if (!$this->session->has('cart'))
+                    $this->session->set('cart', []);    
+                //First, we need to check, if the ware is existent in the db
+
+                $ware = Waren::findFirstById($this->request->getPost('del_id'));
+                if (!$ware || $ware->deleted) {
+                    $r->setStatusCode(406, 'Not acceptable');
+                    return $r;
+                }
+                $details = Warenrevisionen::findFirst(['conditions' => "id = $ware->id AND revision = $ware->cur_rev"]);
+                if (!$details) {
+                    $r->setStatusCode(407, 'Not acceptable');
+                    return $r;
+                }
+
+                
+                $cart = $this->session->get('cart');
+                $id = $ware->id;
+                $menge = 0;
+                $addToSum = round($details->price * ($details->mehrwertsteuer_voll ? 1.19 : 1.07), 2);
+                $price = str_replace('.', ',', round($details->price * ($details->mehrwertsteuer_voll ? 1.19 : 1.07), 2)). "€";
+
+                foreach ($cart as $k => $v) {
+                    if ($cart[$k][0] == $ware->id) {
+                        $menge = $cart[$k][1];
+                        $data = ['id' => $ware->id, 'removeFromSum' => $addToSum * $menge];
+                        unset($cart[$k]);
+                        break;
+                    }
+                }
+                if (!isset($data)) {
+                    $r->setStatusCode(408, 'Not acceptable');
+                    return $r;
+                } 
+                $this->session->set('cart', $cart);
+
+                $r->setStatusCode(200, 'OK');
+                $r->setContent(json_encode($data));
+                $this->view->disable();
+            }
+        }
+        return $r;
     }
 
     public function doDeleteAction($page, $perPage, $what) {

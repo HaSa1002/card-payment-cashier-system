@@ -2,7 +2,7 @@
 <?php
     echo $this->getContent();
     echo $this->tag->form([
-        'finance/transaction',
+        'waren/salesSince/',
         'class' => 'form form-inline'
     ]);
 ?>
@@ -19,20 +19,13 @@
 ?>
 </div>
 
-<table class="table table-hover table-sm">
+<table class="table table-sm table-hover">
     <thead>
-        <tr><th>Transaktion</th><th>Kunde</th><th>Verkäufer</th><th>Preis</th><th>Steuern</th><th>Datum und Uhrzeit</th></tr>
+        <tr><th>Warennummer</th><th>Menge</th></tr>
     </thead>
     <tbody>
-        <?php foreach($t as $transaction): ?>
-        <tr>
-            <th><?php echo $transaction['id'] ?></th>
-            <td><?php echo $transaction['user'] ?></td>
-            <td><?php echo $transaction['vertreter'] ?></td>
-            <td><?php echo $transaction['price'] ?></td>
-            <td><?php echo $transaction['tax'] ?></td>
-            <td><?php echo $transaction['datetime'] ?></td>
-        </tr>
+        <?php foreach($data as $i): ?>
+        <tr><th><?php echo $i->waren_id ?></td><td><?php echo $i->menge ?></tr>
         <?php endforeach ?>
     </tbody>
 </table>

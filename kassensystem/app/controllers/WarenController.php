@@ -30,7 +30,7 @@ class WarenController extends ControllerBase {
     }
 
     public function addAction() {
-        $this->dispatcher->forward(["waren/edit/"]);
+        return $this->dispatcher->forward(["waren/edit/"]);
     }
 
     public function deleteAction($id) {
@@ -55,17 +55,14 @@ class WarenController extends ControllerBase {
                     $this->db->rollback();
                     //Log
                 } else {
-                $this->db->commit();
-                $this->flash->success("Die Ware ($x->id) wurde erfolgreich gelöscht.");
+                    $this->db->commit();
+                    $this->flash->success("Die Ware ($x->id) wurde erfolgreich gelöscht.");
                 }
-                echo $this->tag->linkTo(["waren/overview", "Fixen! (Weiter)", "class" => "btn btn-primary"]);
-                //$overview = $this->url->get('waren/overview');
-                //echo "<script type=\"text/javascript\">window.location = \"$overview\";</script>";
             }
         } else {
             $this->flash->error("Unexpected magic happend. (0xwd)");
-            echo $this->tag->linkTo(["waren/overview", "Fixen!", "class" => "btn btn-primary"]);
         }
+        return $this->dispatcher->forward(["action" => "overview"]);
     } 
 
 /*
@@ -170,10 +167,40 @@ class WarenController extends ControllerBase {
         if (!$this->request->hasPost('source')) return;
         
         $s = Sources::findFirstByName($this->request->getPost('source'));
-        if ($s) return;
+        if ($s) return $this->flash->warning("Die Quelle existiert bereits.");
         $s = new Sources();
         $s->name = $this->request->getPost('source');
-        if ($s->save() === false) return;
+        if ($s->save() === false) return $this->flash->danger("Die Quelle konnte nicht gespeichert werden.");
+        $this->flash->success("Die Quelle wurde eingetragen.");
     }
+
+    
+
+    public function salesSinceAction() {
+        if (!$this->authorized(ControllerBase::GOODS)) return;
+        $time = "now";
+        if ($this->request->isPost()) {
+            if ($this->request->has('dt')) {
+                $time = $this->request->get('dt');
+            } else {
+                
+            }
+            $time = "$time ";
+            if ($this->request->has('t')) {
+                if (!empty($this->request->get('t')))
+                $time = $time . $this->request->get('t');
+                else $time = "$time 00:00";
+            } else {
+                $time = "$time 00:00";
+            }
+            $time = "$time:00";
+        }
+        $data = new Warentransaktionen();
+        $datetime = new DateTime($time, new DateTimeZone("europe/berlin"));
+        $dbDate = $datetime->format("Y-m-d H:i:s");
+        $this->view->data = $data->getSalesSince($dbDate);
+        $this->view->date = $datetime->format("d.m.Y H:i:s");
+    }
+
 }
 

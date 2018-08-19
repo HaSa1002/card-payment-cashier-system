@@ -10,9 +10,23 @@ $router->add(
         'action'     => 'logout',
     ]
 );
+$router->add(
+    '/logout',
+    [
+        'controller' => 'index',
+        'action'     => 'logout',
+    ]
+);
 
 $router->add(
     '/select/',
+    [
+        'controller' => 'index',
+        'action'     => 'select',
+    ]
+);
+$router->add(
+    '/select',
     [
         'controller' => 'index',
         'action'     => 'select',

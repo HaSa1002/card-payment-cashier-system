@@ -10,9 +10,32 @@
         <link rel="stylesheet" href="<?php echo $this->url->get('css/floating-labels.css') ?>"/>
     </head>
     <body class="d-flex" style="flex-direction: column">
+    <script src="<?php echo $this->url->get('js/jquery-3.3.1.min.js'); ?>"></script>
         <?php echo $this->getContent(); ?>
+        <footer class="fixed-bottom">
+        <div class="d-flex flex-column ">
+            <p class="text-muted mx-auto row">&copy; 2018 mehr als lernen e.V.</p>
+            <p class="text-muted mx-auto row">Entwickelt und betreut von Johannes Witt (johawitt@outlook.de)</p>
+        </div>
+        </footer>
+        <script>
+            $.fn.overflown=function(){var e=this[0];return e.scrollHeight>e.clientHeight||e.scrollWidth>e.clientWidth;};
+
+            if ($("body").overflown()) {
+                $(".container").addClass("to-big");
+            }
+
+            $(document).ready(function() {
+                $(window).resize(function() {
+                    if ($("body").overflown()) {
+                        $(".container").addClass("to-big");
+                    }
+                });
+            });
+            
+        </script>
         
-        <script src="<?php echo $this->url->get('js/jquery-3.3.1.min.js'); ?>"></script>
+        
         <script src="<?php echo $this->url->get('js/bootstrap.bundle.min.js'); ?>"></script>
     </body>
 </html>

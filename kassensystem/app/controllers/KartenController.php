@@ -36,6 +36,10 @@ class KartenController extends ControllerBase {
         if ($this->view->betrag == 0) {
             $this->flash->warning("Ein Betrag von Null ist nicht zulässig.");
         }
+        if ($this->view->betrag > 50) {
+            $this->flash->warning("Die maximale Transaktionsmenge beträgt 50 Euro.");
+            $this->view->betrag = 50;
+        }
         
     }
 
@@ -63,19 +67,9 @@ class KartenController extends ControllerBase {
             ]);
         }
 
-        $datetime = new DateTime("now", new DateTimeZone("europe/berlin"));
-        // Set the view data
-        $this->view->ausweisnummer = $this->request->getPost('ausweis', 'int');
         // Transform the german string to a float val
         $this->view->betrag = $this->filter->sanitize(str_replace(',', '.', $this->request->getPost('amount')), 'float');
-        $this->view->vertreter = $this->session->get('ausweis');
-        $this->view->datum = $datetime->format("d.m.Y H:i:s");
-
-        //Create a new Transaktion and fill it with data
-        $transaktion = new Kartentransaktionen();
-        $transaktion->user = $this->view->ausweisnummer;
-        $transaktion->datetime = $datetime->format("Y-m-d H:i:s");
-        $transaktion->vertreter = $this->view->vertreter;
+        
 
         //We don't allow negativ amounts
         if ($this->view->betrag <= 0) {
@@ -86,97 +80,85 @@ class KartenController extends ControllerBase {
             ]);
         }
 
+        //We have a limit of 50€
+        if ($this->view->betrag > 50) {
+            $this->flash->error("Die maximale Transaktionsmenge beträgt 50 Euro.");
+            return $this->dispatcher->forward([
+                'controller' => 'karten',
+                'action' => 'index'
+            ]);
+        }
+
+
+        $datetime = new DateTime("now", new DateTimeZone("europe/berlin"));
+        // Set the view data
+        $this->view->ausweisnummer = $this->request->getPost('ausweis', 'int');
+
+        $this->view->vertreter = $this->session->get('ausweis');
+        $this->view->datum = $datetime->format("d.m.Y H:i:s");
+        $this->view->trans_id = $transaktion->trans_id;
+
+        //Create a new Transaktion and fill it with data
+        $transaktion = new Kartentransaktionen();
+        $transaktion->user = $this->view->ausweisnummer;
+        $transaktion->datetime = $datetime->format("Y-m-d H:i:s");
+        $transaktion->vertreter = $this->view->vertreter;
+
+        $user = Users::findFirstByAusweis($this->view->ausweisnummer);
+        if (!$user) {
+            $user = new Users();
+            $user->ausweis = $this->view->ausweisnummer;
+            $user->access = 0;
+        }
+
         if ($this->request->getPost('source', 'string') == "Auszahlung") {
-            //Get the given User or error that it is non-existent
-            $user = Users::findFirstByAusweis($this->view->ausweisnummer);
-            if (!$user) {
-                $this->flash->error("Der Nutzer ist nicht im System vorhanden.");
-                return $this->dispatcher->forward([
-                    'controller' => 'karten',
-                    'action' => 'index'
-                    ]);
-                    
-            } elseif ($user->amount < $this->view->betrag) {
+            if ($user->amount < $this->view->betrag) {
                 $this->flash->error("Der Nutzer hat nicht genügend Guthaben.");
                 return $this->dispatcher->forward([
                     'controller' => 'karten',
                     'action' => 'index'
                     ]);
-            } else {
-                //Start the transaction and make the amount a negativ val, because we withdraw money
-                $this->db->begin();
-                $user->amount -= $this->view->betrag;
-                $transaktion->amount = (-1) * $this->view->betrag;
-                if ($user->save() === false) {
-                    $this->flash->error("Geloggter Datenbankfehler. Sie können nichts tun, außer den Admin um Hilfe zu bitten.");
-                    $this->db->rollback();
-                    //We need to log here, because this could be an error that is persistent
-                    $f = __METHOD__ . ':' . __LINE__;
-                    $this->logger->critical("[$f] User can't be saved.");
-                    return $this->dispatcher->forward([
-                        'controller' => 'karten',
-                        'action' => 'index'
-                        ]);
-                }
-                if ($transaktion->save() === false) {
-                    $this->flash->error("Geloggter Datenbankfehler. Sie können nichts tun, außer den Admin um Hilfe zu bitten.");
-                    $this->db->rollback();
-                    //We need to log here, because this could be an error that is persistent
-                    $f = $_SERVER['PHP_SELF'];
-                    $this->logger->critical("[$f] Kartentransaktion can't be saved.");
-                    return $this->dispatcher->forward([
-                        'controller' => 'karten',
-                        'action' => 'index'
-                        ]);
-                }
-                $this->db->commit();
-                $this->view->trans_id = $transaktion->trans_id;
-                //Logging
-                        
-                        $this->view->pick('karten/auszahlungsbeleg');
-                    }
-                } elseif ($this->request->getPost('source', 'string') == "Einzahlung") {
-                    $user = Users::findFirstByAusweis($this->view->ausweisnummer);
-                    if (!$user) {
-                        $user = new Users();
-                        $user->ausweis = $this->view->ausweisnummer;
-                        $user->access = 0;
-                    }
-                    
-                    $user->amount += $this->view->betrag;
-                    $transaktion->amount = $this->view->betrag;
-                    $this->db->begin();
-                    if ($user->save() === false) {
-                        $this->flash->error("Datenbankfehler (0x1ku).");
-                        
-                        $this->db->rollback();
-                        //Log wichtig
+            }
+            
+            $user->amount -= $this->view->betrag;
+            $transaktion->amount = (-1) * $this->view->betrag;
+            $this->view->pick('karten/auszahlungsbeleg');
 
-                        return $this->dispatcher->forward([
-                            'controller' => 'karten',
-                            'action' => 'index'
-                            ]);
-                    }
-                    if ($transaktion->save() === false) {
-                        $this->flash->error("Datenbankfehler (0x1kt).");
-                        
-                        $this->db->rollback();
-                        //Log wichtig
-                        return $this->dispatcher->forward([
-                            'controller' => 'karten',
-                            'action' => 'index'
-                            ]);
-                    }
-                    
-                    $this->db->commit();
-                    $this->view->trans_id = $transaktion->trans_id;
-                } else {
-                    $this->flash->error("Fehler 505. Bitte Vorgang wiederholen. Es wurde keine Transaktion durchgeführt. ".$this->request->getPost('source', 'string'));
-                    $this->dispatcher->forward([
-                        'controller' => 'karten',
-                        'action' => 'index'
-                        ]);
-                    } //if else
+        } elseif ($this->request->getPost('source', 'string') == "Einzahlung") {        
+            $user->amount += $this->view->betrag;
+            $transaktion->amount = $this->view->betrag;
+        } else {
+            $this->flash->error("Fehler 505. Bitte Vorgang wiederholen. Es wurde keine Transaktion durchgeführt.");
+            return $this->dispatcher->forward([
+                'controller' => 'karten',
+                'action' => 'index'
+                ]);
+        }
+                
+        $this->db->begin();
+        if ($user->save() === false) {
+            $this->flash->error("Geloggter Datenbankfehler. Sie können nichts tun, außer den Admin um Hilfe zu bitten.");
+            $this->db->rollback();
+            //We need to log here, because this could be an error that is persistent
+            $f = __METHOD__ . ':' . __LINE__;
+            $this->logger->critical("[$f] User can't be saved.");
+            return $this->dispatcher->forward([
+                'controller' => 'karten',
+                'action' => 'index'
+                ]);
+        }
+        if ($transaktion->save() === false) {
+            $this->flash->error("Geloggter Datenbankfehler. Sie können nichts tun, außer den Admin um Hilfe zu bitten.");
+            $this->db->rollback();
+            //We need to log here, because this could be an error that is persistent
+            $f = __METHOD__ . ':' . __LINE__;
+            $this->logger->critical("[$f] Kartentransaktion can't be saved.");
+            return $this->dispatcher->forward([
+                'controller' => 'karten',
+                'action' => 'index'
+                ]);
+        }
+        $this->db->commit();   
     } // function
 } //controller
 
