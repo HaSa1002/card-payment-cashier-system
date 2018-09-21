@@ -93,16 +93,17 @@ class KartenController extends ControllerBase {
         $datetime = new DateTime("now", new DateTimeZone("europe/berlin"));
         // Set the view data
         $this->view->ausweisnummer = $this->request->getPost('ausweis', 'int');
-
         $this->view->vertreter = $this->session->get('ausweis');
         $this->view->datum = $datetime->format("d.m.Y H:i:s");
-        $this->view->trans_id = $transaktion->trans_id;
 
+        
         //Create a new Transaktion and fill it with data
         $transaktion = new Kartentransaktionen();
         $transaktion->user = $this->view->ausweisnummer;
         $transaktion->datetime = $datetime->format("Y-m-d H:i:s");
         $transaktion->vertreter = $this->view->vertreter;
+        
+        $this->view->trans_id = $transaktion->trans_id;
 
         $user = Users::findFirstByAusweis($this->view->ausweisnummer);
         if (!$user) {
@@ -158,7 +159,9 @@ class KartenController extends ControllerBase {
                 'action' => 'index'
                 ]);
         }
-        $this->db->commit();   
+        $this->db->commit();
+        $this->flash->success("Die Transaktion über $transaktion->amount war erfolgreich.");
+        return $this->dispatcher->forward(['action' => 'einzahlung']);
     } // function
 } //controller
 

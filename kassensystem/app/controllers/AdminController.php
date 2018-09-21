@@ -16,7 +16,7 @@ class AdminController extends ControllerBase
             $user->access = $this->request->getPost('access', 'int');
             
             
-            if ($user->save() === false) $this->flash->error("Der Benutzer ($ausweis) wurde nicht aktualisiert. (Access: $user->access)");
+            if ($user->save(NULL, NULL, true) === false) $this->flash->error("Der Benutzer ($ausweis) wurde nicht aktualisiert. (Access: $user->access)");
             else $this->flash->success("Der Benutzer ($ausweis) wurde aktualisiert. (Access: $user->access)");  
         }
     }
