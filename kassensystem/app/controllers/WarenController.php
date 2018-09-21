@@ -13,7 +13,7 @@ class WarenController extends ControllerBase {
         $waren = $this->modelsManager->executeQuery("SELECT 
         Warenrevisionen.id, price, mehrwertsteuer_voll, description, deleted, created, s_mwst_full, s_price, name
         FROM Warenrevisionen, Waren, Sources WHERE (Warenrevisionen.revision = Waren.cur_rev AND Warenrevisionen.id = Waren.id 
-        AND source = Sources.id) AND (Waren.id LIKE :id: OR description LIKE :id: OR name LIKE :id:) ORDER BY Waren.id ASC", ["id" => "%".$this->request->get('id', 'string')."%"]);
+        AND source = Sources.id) AND (Waren.id LIKE :id: OR description LIKE :id: OR name LIKE :id:) AND Waren.deleted = 0 ORDER BY Waren.id ASC", ["id" => "%".$this->request->get('id', 'string')."%"]);
 
         if ($items_per_page == 0)
             $items_per_page = 10;

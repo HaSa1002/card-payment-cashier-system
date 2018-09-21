@@ -20,8 +20,8 @@
         <tr><th>Warennummer</th><th>Produkt</th><th>Quelle</th><th>Einkaufspreis</th><th>Verkaufspreis</th><th>Aktionen</th></tr>
     </thead>
     <tbody>
-        <?php foreach($page->items as $ware): if ($ware->deleted) continue; ?>
-        <tr <?php if ($ware->deleted) echo "class=\"table-secondary\"" ?>><th><?php echo $ware->id ?></td>
+        <?php foreach($page->items as $ware): ?>
+        <tr><th><?php echo $ware->id ?></td>
             <td><?php echo $ware->description ?></td>
             <td><?php echo $ware->name ?></td>
             <td><?php echo str_replace('.', ',', round($ware->s_price * ($ware->s_mwst_full ? 1.19 : 1.07), 2))." Euro<br>inkl. "; if ($ware->s_mwst_full) echo "19%"; else echo "7%"; echo " MwSt." ?></td>
