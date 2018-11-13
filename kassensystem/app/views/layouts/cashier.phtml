@@ -3,7 +3,8 @@
     <img src="<?php echo $this->url->get('img/roroPay.svg'); ?>" alt ="" width="30" height="30" class="d-inline-block align-top"/>
     Cafeteria Kassensystem</a>
     <a href="<?php echo $this->url->get('cashier/add/1/1/') ?>" class="nav-item nav-link">Neuer Kassiervorgang</a>
-    <a href="<?php echo $this->url->get('cashier/add/1/0/') ?>" class="nav-item nav-link mr-auto">Aktueller Kassiervorgang</a>
+    <a href="<?php echo $this->url->get('cashier/add/1/0/') ?>" class="nav-item nav-link">Aktueller Kassiervorgang</a>
+    <a href="<?php echo $this->url->get('cashier/transactions') ?>" class="nav-item nav-link mr-auto">Transaktionen</a>
     <?php if ($this->session->has('ausweis')): ?> 
     <div class="dropdown">
         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

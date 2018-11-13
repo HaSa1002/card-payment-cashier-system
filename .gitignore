@@ -1,3 +1,5 @@
 *.pem
 kassensystem/app/config/config.php
 kassensystem/app/log/log.txt
+kassensystem/app/config/config.1.php
+info.php

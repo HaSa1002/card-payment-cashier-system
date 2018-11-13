@@ -77,10 +77,10 @@ $di->setShared('db', function () {
         'charset'  => $config->database->charset,
         'options' => [
             PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
-            PDO::MYSQL_ATTR_SSL_CA => 'E:\\xampp\\htdocs\\kassensystem\\ca.pem',
-            PDO::MYSQL_ATTR_SSL_CERT => 'E:\\xampp\\htdocs\\kassensystem\\server-cert.pem',
-            PDO::MYSQL_ATTR_SSL_KEY => 'E:\\xampp\\htdocs\\kassensystem\\server-key.pem',
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+            //PDO::MYSQL_ATTR_SSL_CA => 'E:\\xampp\\htdocs\\kassensystem\\ca.pem',
+            //PDO::MYSQL_ATTR_SSL_CERT => 'E:\\xampp\\htdocs\\kassensystem\\server-cert.pem',
+            //PDO::MYSQL_ATTR_SSL_KEY => 'E:\\xampp\\htdocs\\kassensystem\\server-key.pem',
+            //PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
         ]
     ];
 

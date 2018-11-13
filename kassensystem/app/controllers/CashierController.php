@@ -7,7 +7,24 @@ use Phalcon\Http\Response;
 
 class CashierController extends ControllerBase {
 
-    public function indexAction() { if (!parent::authorized(ControllerBase::CASHIER)) return;
+
+    private function makeSelectIn() {
+        $place_komma = false;
+        $res = "";
+        foreach ($this->session->get('cart') as $e) {
+            if (!$place_komma) $place_komma = true;
+            else $res .= ",";
+            $res .= htmlspecialchars($e[0]);
+        }
+        
+        if ($res == "") {
+            $res = -1; //Es kann keine negativen Warenid geben, folglich sollten wir nichts zrückbekommen 
+        }
+        return $res;
+    }
+
+    public function indexAction() { 
+        if (!parent::authorized(ControllerBase::CASHIER)) return;
         return $this->dispatcher->forward(["action" => "add"]);
     
     }
@@ -71,6 +88,15 @@ class CashierController extends ControllerBase {
 
 
 
+    public function transactionsAction() {
+        $this->view->t = [];
+        if (!parent::authorized(ControllerBase::CASHIER)) return;
+        if ($this->request->has('userid')) {
+            $t = new Transaktionen();
+            $this->view->t = $t->findByUser($this->request->get('userid', 'int'));  
+        }
+
+    }
 
 
     public function addAction($page = 1, $reset = false, $perPage = 6) {
@@ -93,21 +119,10 @@ class CashierController extends ControllerBase {
                 $this->session->set('cart', $cart);
             }
         }
-        //Mengenfunktion
-        $place_komma = false;
-        $res = "";
-        foreach ($this->session->get('cart') as $e) {
-            if (!$place_komma) $place_komma = true;
-            else $res .= ",";
-            $res .= $this->filter->sanitize($e[0], 'int');
-        }
-        
-        if ($res == "") {
-            $res = -1; //Es kann keine negativen Warenid geben, folglich sollten wir nichts zrückbekommen 
-        }
         
         //PHQL Binding für IN (...) nochmal nachschauen. Die hiesige Lösung ist GEFÄHRLICH
-        $waren = $this->modelsManager->executeQuery("SELECT Warenrevisionen.id, price, mehrwertsteuer_voll, description, deleted, created FROM Warenrevisionen, Waren WHERE Warenrevisionen.revision = Waren.cur_rev AND Warenrevisionen.id = Waren.id AND Waren.id IN ($res)");
+        $waren = $this->modelsManager->executeQuery("SELECT Warenrevisionen.id, price, mehrwertsteuer_voll, description, deleted, created FROM Warenrevisionen, Waren
+        WHERE Warenrevisionen.revision = Waren.cur_rev AND Warenrevisionen.id = Waren.id AND Waren.id IN (".$this->makeSelectIn().")");
         $waren = $waren->toArray(); //Cheeting here, but the next step is impossible with the Resultset
         $i = 0;
         $this->view->a_n = 0;
@@ -295,17 +310,17 @@ class CashierController extends ControllerBase {
             return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
         }
         if (!$this->session->has('cart')) {
-            $this->flash->error("Zahlung konnte nicht durchgeführt werden, da der Warenkorb leer ist.");
+            $this->flash->error("Zahlung konnte nicht durchgeführt werden, da der Warenkorb leer ist. (nE)");
             //Log
             return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
         }
         if (!$this->request->has('id')) {
             $this->flash->error("Zahlung konnte nicht durchgeführt werden, da kein Zahlender angegeben worden ist.");
             //Log
-            return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
+            return $this->dispatcher->forward(['controller' => "cashier", 'action' => "check"]);
         }
         if (empty($this->session->get('cart'))) {
-            $this->flash->error("Zahlung konnte nicht durchgeführt werden, da der Warenkorb leer ist.");
+            $this->flash->error("Zahlung konnte nicht durchgeführt werden, da der Warenkorb leer ist. (E)");
             //Log
             return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
         }
@@ -320,7 +335,7 @@ class CashierController extends ControllerBase {
                 $this->flash->error("Zahlungsvorgang wurde abgebrochen, da der Zahlende dem System weder bekannt ist noch erstellt werden konnte.");
                 $this->db->rollback();
                 //Log
-                return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
+                return $this->dispatcher->forward(['controller' => "cashier", 'action' => "check"]);
             }
         }
         $trans_id = 0;
@@ -332,25 +347,16 @@ class CashierController extends ControllerBase {
         if ($t->save() === false) {
             $this->flash->error("Zahlung konnte nicht durchgeführt werden, da es einen internen Fehler gab. (0x1t)");
             $this->db->rollback();
-            //Log wichtig
-            return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
+            $f = __METHOD__ . ':' . __LINE__;
+            $this->logger->critical("[$f] Transaktion ($t->vertreter für $t->user) can't be saved.");
+            return $this->dispatcher->forward(['controller' => "cashier", 'action' => "check"]);
         }
-        $trans_id = $t->trans_id;
 
-        $place_komma = false;
-        $res = "";
-        foreach ($this->session->get('cart') as $e) {
-            if (!$place_komma) $place_komma = true;
-            else $res .= ",";
-            $res .= htmlspecialchars($e[0]);
-        }
         
-        if ($res == "") {
-            $res = -1; //Es kann keine negativen Warenid geben, folglich sollten wir nichts zrückbekommen 
-        }
         
         //PHQL Binding für IN (...) nochmal nachschauen. Die hiesige Lösung ist GEFÄHRLICH
-        $waren = $this->modelsManager->executeQuery("SELECT Warenrevisionen.id, price, mehrwertsteuer_voll, deleted, revision, description FROM Warenrevisionen, Waren WHERE Warenrevisionen.revision = Waren.cur_rev AND Warenrevisionen.id = Waren.id AND Waren.id IN ($res)");
+        $waren = $this->modelsManager->executeQuery("SELECT Warenrevisionen.id, price, mehrwertsteuer_voll, deleted, revision, description FROM Warenrevisionen, Waren 
+        WHERE Warenrevisionen.revision = Waren.cur_rev AND Warenrevisionen.id = Waren.id AND Waren.id IN (".$this->makeSelectIn().")");
         $waren = $waren->toArray(); //Cheeting here, but the next step is impossible with the Resultset
         $w_i = 0;
         $this->view->a_n = 0;
@@ -393,8 +399,9 @@ class CashierController extends ControllerBase {
             if ($w->save() === false) {
                 $this->flash->error("Zahlung konnte aufgrund eines internen Fehlers nicht durchgeführt werden. (0xcbwt)");
                 $this->db->rollback();
-                //Log wichtig 
-                return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
+                $f = __METHOD__ . ':' . __LINE__;
+                $this->logger->critical("[$f] Ware ($w->id:$w->revision) can't be saved.");
+                return $this->dispatcher->forward(['controller' => "cashier", 'action' => "check"]);
             }
             $w_i++;
         }
@@ -403,26 +410,23 @@ class CashierController extends ControllerBase {
         $this->view->b = $this->view->a_b + $this->view->b_b;
         
         //Eigentliche Checks usw. anstoßen
-        if ($user->amount < $this->view->b) {
+        if ($user->amount <= $this->view->b) {
             $this->flash->error("Zahlung konnte nicht durchgeführt werden, da das Konto nicht ausreichend gedeckt ist.");
             $this->db->rollback();
             //Log
-            return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
+            return $this->dispatcher->forward(['controller' => "cashier", 'action' => "check"]);
         }
         $user->amount -= $this->view->b;
 
         if ($user->save() === false) {
             $this->flash->error("Zahlung konnte nicht durchgeführt werden, da es einen internen Fehler gab. (0xcbu)");
             $this->db->rollback();
-            //Log wichtig
+            $f = __METHOD__ . ':' . __LINE__;
+            $this->logger->critical("[$f] User ($user->id) can't be saved.");
             return $this->dispatcher->forward(['controller' => "cashier", 'action' => "add"]);
         }
         $this->db->commit();
-        $this->view->guthaben = $user->amount;
         $this->session->set('cart', []);
-        $this->view->waren = $waren;
-        $this->view->trans_id = $t->trans_id;
-        $this->view->vertreter = $t->vertreter;
         
         $this->flash->success("Der Kauf wurde durchgeführt. Verbleibendes Guthaben: $user->amount");
         return $this->dispatcher->forward(["controller" => "cashier", "action" => "add"]);

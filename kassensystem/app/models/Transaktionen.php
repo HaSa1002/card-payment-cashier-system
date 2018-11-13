@@ -70,6 +70,26 @@ class Transaktionen extends \Phalcon\Mvc\Model
         
     }
 
+    public function findByUser($id) {
+        $t = $this->modelsManager->executeQuery("SELECT Transaktionen.trans_id, user, vertreter, datetime, menge, id, price, mehrwertsteuer_voll
+        FROM Transaktionen, Warentransaktionen, Warenrevisionen
+        WHERE Transaktionen.trans_id = Warentransaktionen.trans_id AND waren_id = id 
+        AND Warentransaktionen.revision = Warenrevisionen.revision AND user = :user:", ['user' => $id]);
+        if (!$t) return false;
+        $res = [];
+
+        foreach ($t as $i) {
+            if (!isset($res[$i->trans_id])) {
+                $res[$i->trans_id] = ['id' => $i->trans_id, 'user' => $i->user, 'vertreter' => $i->vertreter, 'datetime' => $i->datetime, 'price' => 0, 'tax' => 0];
+            }
+            if ($i->mehrwertsteuer_voll) $mwst = 1.19;
+            else $mwst = 1.07;
+            $res[$i->trans_id]['price'] += round($i->price * $mwst, 2) * $i->menge;
+            $res[$i->trans_id]['tax'] += round($i->price * ($mwst-1), 2) * $i->menge;
+        }
+        return $res;
+    }
+
 
     /**
      * Returns the transaction details
