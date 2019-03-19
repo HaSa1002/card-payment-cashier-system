@@ -93,12 +93,14 @@
 <script src="<?php echo $this->url->get('js/test.js') ?>", type="text/javascript"></script>
 <script>
 function clearCtrlInput(char) {
-    if ($("#waren_id").val().endsWith(char))
-        $("#waren_id").val($("#waren_id").val().substr(0, $("#waren_id").val().length - 2));
-    if ($("#menge").val().endsWith(char))
-        $("#menge").val($("#menge").val().substr(0, $("#menge").val().length - 2));
-    if ($("#del_id").val().endsWith(char))
-        $("#del_id").val($("#del_id").val().substr(0, $("#del_id").val().length - 2));
+    while ($("#waren_id").val().endsWith(char))
+        $("#waren_id").val($("#waren_id").val().substr(0, $("#waren_id").val().length - 1));
+
+    while ($("#menge").val().endsWith(char))
+        $("#menge").val($("#menge").val().substr(0, $("#menge").val().length - 1));
+
+    while ($("#del_id").val().endsWith(char))
+        $("#del_id").val($("#del_id").val().substr(0, $("#del_id").val().length - 1));
 }
 
 

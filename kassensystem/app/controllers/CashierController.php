@@ -410,8 +410,8 @@ class CashierController extends ControllerBase {
         $this->view->b = $this->view->a_b + $this->view->b_b;
         
         //Eigentliche Checks usw. anstoßen
-        if ($user->amount <= $this->view->b) {
-            $this->flash->error("Zahlung konnte nicht durchgeführt werden, da das Konto nicht ausreichend gedeckt ist.");
+        if ($user->amount < $this->view->b) {
+            $this->flash->error("Zahlung konnte nicht durchgeführt werden, da das Konto nicht ausreichend gedeckt ist. (Guthaben: $user->amount | Betrag: ".$this->view->b.")");
             $this->db->rollback();
             //Log
             return $this->dispatcher->forward(['controller' => "cashier", 'action' => "check"]);
